@@ -24,9 +24,7 @@ const menuItems = [
         ]
     },
     { name: "Support Tickets", icon: LifeBuoy, path: "/support" },
-        {
-        name: "POS", icon: Users, path: "/point-of-sale"
-    },
+
 
 ]
 
