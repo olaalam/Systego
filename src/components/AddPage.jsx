@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+// src/components/AddPage.jsx
+import React, { useState, useEffect } from 'react';
 
 const AddPackage = ({
   title = "Add Package",
   onSubmit = () => {},
   onCancel = () => {},
   initialData = {},
+  loading = false,
   features = [
     { key: 'productCategories', label: 'Product and Categories', defaultChecked: true },
     { key: 'purchaseSale', label: 'Purchase and Sale', defaultChecked: true },
@@ -20,21 +22,45 @@ const AddPackage = ({
   className = ""
 }) => {
   const [formData, setFormData] = useState({
-    name: initialData.name || '',
-    monthlyFee: initialData.monthlyFee || '',
-    yearlyFee: initialData.yearlyFee || '',
-    isFree: initialData.isFree || false,
-    isFreeTrial: initialData.isFreeTrial || true,
-    warehouses: initialData.warehouses || 0,
-    products: initialData.products || 0,
-    invoices: initialData.invoices || 0,
-    userAccounts: initialData.userAccounts || 0,
-    employees: initialData.employees || 0,
-    selectedFeatures: initialData.selectedFeatures || features.reduce((acc, feature) => {
+    name: '',
+    monthlyFee: '',
+    yearlyFee: '',
+    isFree: false,
+    isFreeTrial: true,
+    warehouses: 0,
+    products: 0,
+    invoices: 0,
+    userAccounts: 0,
+    employees: 0,
+    selectedFeatures: features.reduce((acc, feature) => {
       acc[feature.key] = feature.defaultChecked;
       return acc;
     }, {})
   });
+
+  // ✅ Use useEffect to sync local state with the initialData prop
+  useEffect(() => {
+    // Check if initialData is not empty
+    if (initialData && Object.keys(initialData).length > 0) {
+      setFormData({
+        name: initialData.name || '',
+        monthlyFee: initialData.monthlyFee || '',
+        yearlyFee: initialData.yearlyFee || '',
+        isFree: initialData.isFree || false,
+        isFreeTrial: initialData.isFreeTrial || true,
+        warehouses: initialData.warehouses || 0,
+        products: initialData.products || 0,
+        invoices: initialData.invoices || 0,
+        userAccounts: initialData.userAccounts || 0,
+        employees: initialData.employees || 0,
+        // Map features from the API to the local state
+        selectedFeatures: features.reduce((acc, feature) => {
+          acc[feature.key] = initialData.features?.includes(feature.key) || false;
+          return acc;
+        }, {})
+      });
+    }
+  }, [initialData, features]);
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
@@ -59,7 +85,14 @@ const AddPackage = ({
       alert('Please fill in all required fields');
       return;
     }
-    onSubmit(formData);
+    
+    // ✅ Prepare data for API submission
+    const dataToSubmit = {
+      ...formData,
+      features: Object.keys(formData.selectedFeatures).filter(key => formData.selectedFeatures[key]),
+    };
+    
+    onSubmit(dataToSubmit);
   };
 
   const NumberInput = ({ label, field, placeholder = "0" }) => (
@@ -200,14 +233,16 @@ const AddPackage = ({
           <button
             type="button"
             onClick={() => handleSubmit()}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors "
+            disabled={loading}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
-            Save Package
+            {loading ? "Saving..." : "Save Package"}
           </button>
           <button
             type="button"
             onClick={onCancel}
-            className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+            disabled={loading}
+            className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg font-medium transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
             Cancel
           </button>

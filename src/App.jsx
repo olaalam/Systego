@@ -1,5 +1,11 @@
+// src/App.jsx
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, useLocation } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  useLocation,
+  Navigate,
+} from "react-router-dom";
+
 import Sidebar from "@/components/Sidebar";
 import AppRoutes from "@/router";
 import Navbar from "@/components/Navbar";
@@ -11,19 +17,24 @@ import Loader from "./components/Loader";
 const MainLayout = () => {
   const location = useLocation();
   const isLoginPage = location.pathname === "/login";
+  const token = localStorage.getItem("token");
 
-  // State to control the loading status
+  // ✅ Auth Guard
+  if (isLoginPage && token) {
+    return <Navigate to="/" replace />;
+  }
+  if (!isLoginPage && !token) {
+    return <Navigate to="/login" replace />;
+  }
+
+  // ✅ Loader
   const [isLoading, setIsLoading] = useState(true);
-
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
-
+    const timer = setTimeout(() => setIsLoading(false), 2000);
     return () => clearTimeout(timer);
   }, []);
 
-  // لو صفحة اللوجين، نعرضها من غير سايدبار/ناڤبار
+  // ✅ لو صفحة اللوجين
   if (isLoginPage) {
     return (
       <main className="flex-1 bg-gray-50">
@@ -32,22 +43,21 @@ const MainLayout = () => {
     );
   }
 
-  // غير كده نعرض اللايوت كامل
+  // ✅ باقي الصفحات بالـ Layout
   return (
     <div className="flex">
       <Sidebar />
       <div className="flex-1 flex flex-col">
         <Navbar />
-<main className="flex-1 bg-gray-50">
-  {isLoading ? (
-    <div className="w-full h-full flex items-center justify-center">
-      <Loader />
-    </div>
-  ) : (
-    <AppRoutes />
-  )}
-</main>
-
+        <main className="flex-1 bg-gray-50">
+          {isLoading ? (
+            <div className="w-full h-full flex items-center justify-center">
+              <Loader />
+            </div>
+          ) : (
+            <AppRoutes />
+          )}
+        </main>
       </div>
     </div>
   );
