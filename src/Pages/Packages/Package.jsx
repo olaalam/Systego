@@ -1,4 +1,4 @@
-// src/pages/clients.jsx
+// src/pages/packages.jsx
 import { useState } from "react";
 import DataTable from "@/components/DataTable";
 import Loader from "@/components/Loader";
@@ -6,19 +6,19 @@ import DeleteDialog from "@/components/DeleteForm";
 import useGet from "@/hooks/useGet";
 import useDelete from "@/hooks/useDelete";
 
-const Clients = () => {
-  const { data, loading, error, refetch } = useGet("/api/admin/clients");
+const Packages = () => {
+  const { data, loading, error, refetch } = useGet("/api/admin/packages");
   const { deleteData, loading: deleting } = useDelete(
-    "/api/admin/clients/delete"
+    "/api/admin/packages/delete"
   );
 
   const [deleteTarget, setDeleteTarget] = useState(null);
-  const clients = data?.data || [];
+  const packages = data?.data || [];
 
   const handleDelete = async (item) => {
     try {
       // ✅ استدعاء الـ API مع id
-      await deleteData(`/api/admin/clients/delete_item/${item._id}`);
+      await deleteData(`/api/admin/packages/delete_item/${item._id}`);
       refetch();
     } finally {
       setDeleteTarget(null);
@@ -63,13 +63,13 @@ const Clients = () => {
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <DataTable
-        data={clients}
+        data={packages}
         columns={columns}
-        title="Coupon Management"
-        onAdd={() => alert("Add new coupon clicked!")}
-        onEdit={(item) => alert(`Edit coupon: ${item.code}`)}
+        title="package Management"
+        onAdd={() => alert("Add new package clicked!")}
+        onEdit={(item) => alert(`Edit package: ${item.code}`)}
         onDelete={(item) => setDeleteTarget(item)} // 👈 فتح الديالوغ
-        addButtonText="Add Coupon"
+        addButtonText="Add package"
         addPath="add"
         editPath={(item) => `edit/${item._id}`}
         itemsPerPage={10}
@@ -80,8 +80,8 @@ const Clients = () => {
       {/* Delete Dialog */}
       {deleteTarget && (
         <DeleteDialog
-          title="Delete Coupon"
-          message={`Are you sure you want to delete coupon "${
+          title="Delete package"
+          message={`Are you sure you want to delete package "${
             deleteTarget.code || deleteTarget._id
           }"?`}
           onConfirm={() => handleDelete(deleteTarget)}
@@ -93,4 +93,4 @@ const Clients = () => {
   );
 };
 
-export default Clients;
+export default Packages;

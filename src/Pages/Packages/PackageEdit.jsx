@@ -1,4 +1,4 @@
-// src/pages/CouponEdit.jsx
+// src/pages/packageEdit.jsx
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import usePut from "@/hooks/usePut";
@@ -7,44 +7,44 @@ import { toast } from "react-toastify";
 import Loader from "@/components/Loader";
 import AddPage from "@/components/AddPage";
 
-export default function CouponEdit() {
+export default function PackageEdit() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const { putData, loading: updating } = usePut(`/api/admin/coupons/update/${id}`);
+  const { putData, loading: updating } = usePut(`/api/admin/packages/update/${id}`);
 
-  const [couponData, setCouponData] = useState(null);
+  const [packageData, setpackageData] = useState(null);
   const [fetching, setFetching] = useState(true);
 
-  // ✅ Fetch the old coupon data on component mount
+  // ✅ Fetch the old package data on component mount
   useEffect(() => {
-    const fetchCoupon = async () => {
+    const fetchpackage = async () => {
       try {
-        const res = await api.get(`/api/admin/coupons/${id}`);
-        setCouponData(res.data);
+        const res = await api.get(`/api/admin/packages/${id}`);
+        setpackageData(res.data);
       } catch (err) {
-        toast.error("Failed to fetch coupon data");
-        console.error("❌ Error fetching coupon:", err);
+        toast.error("Failed to fetch package data");
+        console.error("❌ Error fetching package:", err);
       } finally {
         setFetching(false);
       }
     };
 
-    fetchCoupon();
+    fetchpackage();
   }, [id]);
 
   // ✅ Handle form submission
   const handleSubmit = async (formData) => {
     try {
       await putData(formData);
-      toast.success("Coupon updated successfully!");
-      navigate("/coupons");
+      toast.success("package updated successfully!");
+      navigate("/packages");
     } catch (err) {
-      toast.error("Failed to update coupon", err);
+      toast.error("Failed to update package", err);
     }
   };
 
-  const handleCancel = () => navigate("/coupons");
+  const handleCancel = () => navigate("/packages");
 
   if (fetching) {
     return (
@@ -54,10 +54,10 @@ export default function CouponEdit() {
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
-      {couponData && (
+      {packageData && (
         <AddPage
-        title={`Edit Coupon: ${couponData?.code || "..."}`}
-          initialData={couponData} // Pass the fetched data
+        title={`Edit package: ${packageData?.code || "..."}`}
+          initialData={packageData} // Pass the fetched data
           onSubmit={handleSubmit}
           onCancel={handleCancel}
           loading={updating}

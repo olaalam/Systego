@@ -1,15 +1,15 @@
-// src/pages/CouponAdd.jsx
+// src/pages/packageAdd.jsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import AddPage from "@/components/AddPage";
 import api from "@/api/api";
 import { toast } from "react-toastify";
 
-const ClientAdd = () => {
+const PackageAdd = () => {
   const navigate = useNavigate();
 
   const fields = [
-    { key: "code", label: "Client Code", required: true },
+    { key: "code", label: "package Code", required: true },
     {
       key: "discount_type",
       label: "Discount Type",
@@ -28,25 +28,25 @@ const ClientAdd = () => {
 
   const handleSubmit = async (data) => {
     try {
-      await api.post("/api/admin/clients/add", data);
-      toast.success("Coupon added successfully!");
-      navigate("/clients"); // 👈 رجوع لصفحة الكوبونات
+      await api.post("/api/admin/packages/add", data);
+      toast.success("package added successfully!");
+      navigate("/packages"); // 👈 رجوع لصفحة الكوبونات
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to add coupon");
+      toast.error(err.response?.data?.message || "Failed to add package");
     }
   };
 
   return (
     <div className="p-6">
       <AddPage
-        title="Add Coupon"
+        title="Add package"
         fields={fields}
         onSubmit={handleSubmit}
-        onCancel={() => navigate("/clients")}
+        onCancel={() => navigate("/packages")}
         initialData={{ status: true }}
       />
     </div>
   );
 };
 
-export default ClientAdd;
+export default PackageAdd;

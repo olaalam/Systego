@@ -1,4 +1,4 @@
-// src/pages/clients.jsx
+// src/pages/payment-methods.jsx
 import { useState } from "react";
 import DataTable from "@/components/DataTable";
 import Loader from "@/components/Loader";
@@ -6,19 +6,19 @@ import DeleteDialog from "@/components/DeleteForm";
 import useGet from "@/hooks/useGet";
 import useDelete from "@/hooks/useDelete";
 
-const Clients = () => {
-  const { data, loading, error, refetch } = useGet("/api/admin/clients");
+const PaymentMethods = () => {
+  const { data, loading, error, refetch } = useGet("/api/admin/payment-methods");
   const { deleteData, loading: deleting } = useDelete(
-    "/api/admin/clients/delete"
+    "/api/admin/payment-methods/delete"
   );
 
   const [deleteTarget, setDeleteTarget] = useState(null);
-  const clients = data?.data || [];
+  const PaymentMethod = data?.data || [];
 
   const handleDelete = async (item) => {
     try {
       // ✅ استدعاء الـ API مع id
-      await deleteData(`/api/admin/clients/delete_item/${item._id}`);
+      await deleteData(`/api/admin/payment-methods/delete_item/${item._id}`);
       refetch();
     } finally {
       setDeleteTarget(null);
@@ -63,13 +63,13 @@ const Clients = () => {
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <DataTable
-        data={clients}
+        data={PaymentMethod}
         columns={columns}
-        title="Coupon Management"
-        onAdd={() => alert("Add new coupon clicked!")}
-        onEdit={(item) => alert(`Edit coupon: ${item.code}`)}
+        title="payment-method Management"
+        onAdd={() => alert("Add new payment-method clicked!")}
+        onEdit={(item) => alert(`Edit payment-method: ${item.code}`)}
         onDelete={(item) => setDeleteTarget(item)} // 👈 فتح الديالوغ
-        addButtonText="Add Coupon"
+        addButtonText="Add payment-method"
         addPath="add"
         editPath={(item) => `edit/${item._id}`}
         itemsPerPage={10}
@@ -80,8 +80,8 @@ const Clients = () => {
       {/* Delete Dialog */}
       {deleteTarget && (
         <DeleteDialog
-          title="Delete Coupon"
-          message={`Are you sure you want to delete coupon "${
+          title="Delete payment-method"
+          message={`Are you sure you want to delete payment-method "${
             deleteTarget.code || deleteTarget._id
           }"?`}
           onConfirm={() => handleDelete(deleteTarget)}
@@ -93,4 +93,4 @@ const Clients = () => {
   );
 };
 
-export default Clients;
+export default PaymentMethods;

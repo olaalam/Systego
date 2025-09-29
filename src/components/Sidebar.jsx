@@ -14,14 +14,11 @@ const menuItems = [
     {
         name: "Client", icon: Users, path: "/client"
     },
-    { name: "Payments", icon: CreditCard, path: "/payments" },
+    { name: "PaymentMethod", icon: CreditCard, path: "/payment-method" },
     { name: "Coupon List", icon: Ticket, path: "/coupons" },
     { name: "Theme", icon: Database, path: "/theme" },
     {
-        name: "Package", icon: Package, children: [
-            { name: "List", path: "/package/list" },
-            { name: "Add", path: "/package/add" }
-        ]
+        name: "Package", icon: Package, path: "/package"
     },
     { name: "Support Tickets", icon: LifeBuoy, path: "/support" },
 
@@ -65,9 +62,8 @@ export default function Sidebar() {
             </div>
 
             {/* ✅ Desktop sidebar with toggle */}
-            <aside className={`hidden md:block h-screen bg-white border-r transition-all duration-300 ${
-                desktopCollapsed ? 'w-16' : 'w-64'
-            }`}>
+            <aside className={`hidden md:block h-screen bg-white border-r transition-all duration-300 ${desktopCollapsed ? 'w-16' : 'w-64'
+                }`}>
                 {/* Header with toggle functionality */}
                 <div className={`flex items-center p-6 border-b ${desktopCollapsed ? 'justify-center' : 'justify-start'}`}>
                     {desktopCollapsed ? (
@@ -80,10 +76,10 @@ export default function Sidebar() {
                         </button>
                     ) : (
                         // Show only Logo when expanded
-                        <img 
-                            src={logo} 
-                            alt="logo" 
-                            className="h-8 cursor-pointer hover:opacity-80 transition-opacity" 
+                        <img
+                            src={logo}
+                            alt="logo"
+                            className="h-8 cursor-pointer hover:opacity-80 transition-opacity"
                             onClick={() => setDesktopCollapsed(!desktopCollapsed)}
                         />
                     )}
@@ -95,9 +91,8 @@ export default function Sidebar() {
                         <li key={index}>
                             <Link
                                 to={item.path}
-                                className={`flex items-center gap-3 p-3 mx-2 rounded-lg hover:bg-gray-100 transition-colors ${
-                                    desktopCollapsed ? 'justify-center' : ''
-                                }`}
+                                className={`flex items-center gap-3 p-3 mx-2 rounded-lg hover:bg-gray-100 transition-colors ${desktopCollapsed ? 'justify-center' : ''
+                                    }`}
                                 title={desktopCollapsed ? item.name : ''}
                             >
                                 <item.icon className="w-5 h-5 flex-shrink-0" />

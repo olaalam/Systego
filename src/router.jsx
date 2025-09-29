@@ -13,6 +13,12 @@ import ProtectedRoute from "@/components/ProtectedRoute"; // ✅
 import Coupons from "./Pages/Coupons/Coupons";
 import CouponAdd from "./Pages/Coupons/CouponAdd";
 import CouponEdit from "./Pages/Coupons/CouponEdit";
+import PackageAdd from "./Pages/Packages/PackageAdd";
+import PackageEdit from "./Pages/Packages/PackageEdit";
+import { Package } from "lucide-react";
+import PaymentMethods from "./Pages/PaymentMethod/PaymentMethod";
+import PaymentMethodAdd from "./Pages/PaymentMethod/PaymentMethodAdd";
+import PaymentMethodEdit from "./Pages/PaymentMethod/PaymentMethodEdit";
 
 export default function AppRoutes() {
   return (
@@ -26,14 +32,6 @@ export default function AppRoutes() {
         element={
           <ProtectedRoute>
             <Dashboard />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="payments"
-        element={
-          <ProtectedRoute>
-            <Payments />
           </ProtectedRoute>
         }
       />
@@ -97,6 +95,60 @@ export default function AppRoutes() {
           element={
             <ProtectedRoute>
               <CouponEdit />
+            </ProtectedRoute>
+          }
+        />
+      </Route>
+      {/* ✅ Package (Nested Routes محمية) */}
+      <Route path="package">
+        <Route
+          index
+          element={
+            <ProtectedRoute>
+              <Package />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="add"
+          element={
+            <ProtectedRoute>
+              <PackageAdd />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="edit/:id"
+          element={
+            <ProtectedRoute>
+              <PackageEdit />
+            </ProtectedRoute>
+          }
+        />
+      </Route>
+      {/* ✅ PaymentMethod (Nested Routes محمية) */}
+      <Route path="payment-method">
+        <Route
+          index
+          element={
+            <ProtectedRoute>
+              <PaymentMethods />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="add"
+          element={
+            <ProtectedRoute>
+              <PaymentMethodAdd />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="edit/:id"
+          element={
+            <ProtectedRoute>
+              <PaymentMethodEdit />
             </ProtectedRoute>
           }
         />

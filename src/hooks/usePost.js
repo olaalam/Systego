@@ -7,7 +7,7 @@ export default function usePost(defaultUrl) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const post = async (body = {}, customUrl = null) => {
+  const postData = async (body = {}, customUrl = null) => {
     try {
       setLoading(true);
       const res = await api.post(customUrl || defaultUrl, body);
@@ -43,5 +43,5 @@ export default function usePost(defaultUrl) {
     }
   };
 
-  return { post, loading, error };
+  return { postData, loading, error };
 }
