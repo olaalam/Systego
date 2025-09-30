@@ -25,25 +25,43 @@ const PaymentMethods = () => {
     }
   };
 
-  const columns = [
-    { key: "name", header: "Name", filterable: true },
-    { key: "description", header: "Description", filterable: true },
-    { key: "logo", header: "Logo", filterable: false },
-    {
-      key: "status",
-      header: "Status",
-      filterable: true,
-      render: (value) => (
-        <span
-          className={`px-2 py-1 rounded-full text-xs ${
-            value ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-          }`}
-        >
-          {value ? "Active" : "Inactive"}
-        </span>
-      ),
-    },
-  ];
+// helper function لعرض الصورة
+const renderLogo = (url) => {
+  if (!url) return <span className="text-gray-400">No Logo</span>;
+  return (
+    <img
+      src={url}
+      alt="Logo"
+      className="h-10 w-10 object-contain rounded border"
+    />
+  );
+};
+
+const columns = [
+  { key: "name", header: "Name", filterable: true },
+  { key: "description", header: "Description", filterable: true },
+  {
+    key: "logo",
+    header: "Logo",
+    filterable: false,
+    render: (value) => renderLogo(value), // 👈 هنا نستعملها
+  },
+  {
+    key: "status",
+    header: "Status",
+    filterable: true,
+    render: (value) => (
+      <span
+        className={`px-2 py-1 rounded-full text-xs ${
+          value ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+        }`}
+      >
+        {value ? "Active" : "Inactive"}
+      </span>
+    ),
+  },
+];
+
 
   if (loading) return <Loader />;
   if (error) return <div className="p-6 text-red-600">{error}</div>;
