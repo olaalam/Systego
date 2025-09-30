@@ -3,14 +3,23 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import api from "@/api/api";
 
-export default function usePost(defaultUrl) {
+export default function usePost(defaultUrl = "") {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const postData = async (body = {}, customUrl = null) => {
+  const postData = async (body = {}, customUrl = null, isFormData = false) => {
     try {
       setLoading(true);
-      const res = await api.post(customUrl || defaultUrl, body);
+
+      // url لازم يكون string
+      const url = String(customUrl || defaultUrl);
+
+      const config = {};
+      if (isFormData) {
+        config.headers = { "Content-Type": "multipart/form-data" };
+      }
+
+      const res = await api.post(url, body, config);
 
       if (res.data?.success) {
         toast.success(res.data?.message || "Success!", {

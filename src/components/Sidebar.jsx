@@ -20,7 +20,6 @@ const menuItems = [
     {
         name: "Package", icon: Package, path: "/packages"
     },
-    { name: "Support Tickets", icon: LifeBuoy, path: "/support" },
 
 
 ]
