@@ -9,40 +9,44 @@ const PaymentMethodAdd = () => {
   const navigate = useNavigate();
 
   const fields = [
-    { key: "code", label: "payment-method Code", required: true },
-    {
-      key: "discount_type",
-      label: "Discount Type",
-      type: "select",
-      options: [
-        { value: "percentage", label: "Percentage" },
-        { value: "fixed", label: "Fixed Amount" },
-      ],
-      required: true,
-    },
-    { key: "discount", label: "Discount", type: "number", required: true },
-    { key: "from", label: "Valid From", type: "date", required: true },
-    { key: "to", label: "Valid To", type: "date", required: true },
+    { key: "name", label: "Name", required: true },
+    { key: "description", label: "Description", required: true },
+    { key: "logo", label: "Logo", type: "image", required: true }, // ✅ غيرنا النوع لـ image
     { key: "status", label: "Active", type: "checkbox" },
   ];
 
   const handleSubmit = async (data) => {
     try {
-      await api.post("/api/admin/payment-methods/add", data);
-      toast.success("payment-method added successfully!");
-      navigate("/payment-methods"); // 👈 رجوع لصفحة الكوبونات
+      await api.post("/api/admin/payment-methods/", data);
+      toast.success("Payment method added successfully!");
+      navigate("/payment-methods");
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to add payment-method");
+      // ✅ عرض الأخطاء من الـ API
+      const errorMessage = 
+        err.response?.data?.error?.message || 
+        err.response?.data?.message || 
+        "Failed to add payment method";
+      
+      const errorDetails = err.response?.data?.error?.details;
+      
+      if (errorDetails && Array.isArray(errorDetails)) {
+        errorDetails.forEach(detail => toast.error(detail));
+      } else {
+        toast.error(errorMessage);
+      }
+      
+      console.error("❌ Error:", err.response?.data);
     }
   };
 
   return (
     <div className="p-6">
       <AddPage
-        title="Add payment-method"
+        title="Add Payment Method"
+        description="Upload logo and fill in the details"
         fields={fields}
         onSubmit={handleSubmit}
-        onCancel={() => navigate("/payment-methods")}
+        onCancel={() => navigate("/payment-method")}
         initialData={{ status: true }}
       />
     </div>

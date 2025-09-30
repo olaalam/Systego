@@ -1,12 +1,9 @@
 // src/router/index.jsx
 import { Routes, Route } from "react-router-dom";
-
 import Dashboard from "@/Pages/Dashboard";
-import Payments from "@/Pages/Payments";
 import Client from "@/Pages/Client/Client";
 import ClientAdd from "@/Pages/Client/ClientAdd";
-import ClientEdit from "@/Pages/Client/ClientEdit";
-import Theme from "@/Pages/Theme";
+import Theme from "@/Pages/Theme/Theme";
 import LoginPage from "@/components/Login";
 import NotFoundPage from "@/Pages/NotFound";
 import ProtectedRoute from "@/components/ProtectedRoute"; // ✅
@@ -15,11 +12,12 @@ import CouponAdd from "./Pages/Coupons/CouponAdd";
 import CouponEdit from "./Pages/Coupons/CouponEdit";
 import PackageAdd from "./Pages/Packages/PackageAdd";
 import PackageEdit from "./Pages/Packages/PackageEdit";
-import { Package } from "lucide-react";
 import PaymentMethods from "./Pages/PaymentMethod/PaymentMethod";
 import PaymentMethodAdd from "./Pages/PaymentMethod/PaymentMethodAdd";
 import PaymentMethodEdit from "./Pages/PaymentMethod/PaymentMethodEdit";
-
+import Package from "./Pages/Packages/Package";
+import ThemeAdd from "./Pages/Theme/ThemeAdd";
+import ThemeEdit from "./Pages/Theme/ThemeEdit";
 export default function AppRoutes() {
   return (
     <Routes>
@@ -35,14 +33,33 @@ export default function AppRoutes() {
           </ProtectedRoute>
         }
       />
-      <Route
-        path="theme"
-        element={
-          <ProtectedRoute>
-            <Theme />
-          </ProtectedRoute>
-        }
-      />
+      {/* ✅ Theme (Nested Routes محمية) */}
+      <Route path="theme">
+        <Route
+          index
+          element={
+            <ProtectedRoute>
+              <Theme />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="add"
+          element={
+            <ProtectedRoute>
+              <ThemeAdd />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="edit/:id"
+          element={
+            <ProtectedRoute>
+              <ThemeEdit />
+            </ProtectedRoute>
+          }
+        />
+      </Route>
 
       {/* ✅ Client (Nested Routes محمية) */}
       <Route path="client">
@@ -59,14 +76,6 @@ export default function AppRoutes() {
           element={
             <ProtectedRoute>
               <ClientAdd />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="edit/:id"
-          element={
-            <ProtectedRoute>
-              <ClientEdit />
             </ProtectedRoute>
           }
         />
@@ -100,7 +109,7 @@ export default function AppRoutes() {
         />
       </Route>
       {/* ✅ Package (Nested Routes محمية) */}
-      <Route path="package">
+      <Route path="packages">
         <Route
           index
           element={

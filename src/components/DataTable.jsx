@@ -8,6 +8,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+
 export default function DataTable({
   data = [],
   columns = [],
@@ -22,12 +23,14 @@ export default function DataTable({
   filterable = true,
   addButtonText = "Add New",
   className = "",
+  showActions = true, // ✅ prop جديدة
 }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedFilters, setSelectedFilters] = useState({});
   const [itemsPerPageState, setItemsPerPageState] = useState(itemsPerPage);
   const navigate = useNavigate();
+
   // Get unique values for filterable columns
   const getFilterOptions = (columnKey) => {
     const values = data.map((item) => item[columnKey]).filter(Boolean);
@@ -93,7 +96,7 @@ export default function DataTable({
                   onAdd();
                 }
               }}
-              className="bg-primary  hover:bg-teal-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+              className="bg-primary hover:bg-teal-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
             >
               <Plus size={20} />
               {addButtonText}
@@ -185,7 +188,7 @@ export default function DataTable({
                   {column.header}
                 </th>
               ))}
-              {(onEdit || onDelete) && (
+              {showActions && (onEdit || onDelete) && ( // ✅ شرط جديد
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Actions
                 </th>
@@ -206,14 +209,13 @@ export default function DataTable({
                         : item[column.key]}
                     </td>
                   ))}
-                  {(onEdit || onDelete) && (
+                  {showActions && (onEdit || onDelete) && ( // ✅ شرط جديد
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       <div className="flex space-x-2">
                         {onEdit && (
                           <button
                             onClick={() => {
                               if (editPath) {
-                                // لو editPath function يبني المسار بالـ id
                                 const path =
                                   typeof editPath === "function"
                                     ? editPath(item)
@@ -247,7 +249,7 @@ export default function DataTable({
             ) : (
               <tr>
                 <td
-                  colSpan={columns.length + (onEdit || onDelete ? 1 : 0)}
+                  colSpan={columns.length + (showActions && (onEdit || onDelete) ? 1 : 0)} // ✅ تعديل
                   className="px-6 py-12 text-center text-gray-500"
                 >
                   No data found

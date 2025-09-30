@@ -9,20 +9,33 @@ const PackageAdd = () => {
   const navigate = useNavigate();
 
   const fields = [
-    { key: "code", label: "package Code", required: true },
+    { key: "name", label: "package Name", required: true },
+    { key: "description", label: "Description", type: "textarea" },
     {
-      key: "discount_type",
-      label: "Discount Type",
-      type: "select",
-      options: [
-        { value: "percentage", label: "Percentage" },
-        { value: "fixed", label: "Fixed Amount" },
-      ],
+      key: "monthly_price",
+      label: "monthly_price",
+      type: "number",
       required: true,
     },
-    { key: "discount", label: "Discount", type: "number", required: true },
-    { key: "from", label: "Valid From", type: "date", required: true },
-    { key: "to", label: "Valid To", type: "date", required: true },
+    {
+      key: "quarterly_price",
+      label: "quarterly_price",
+      type: "number",
+      required: true,
+    },
+    {
+      key: "yearly_price",
+      label: "yearly_price",
+      type: "number",
+      required: true,
+    },
+    {
+      key: "half_yearly_price",
+      label: "half_yearly_price",
+      type: "number",
+      required: true,
+    },
+
     { key: "status", label: "Active", type: "checkbox" },
   ];
 

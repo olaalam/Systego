@@ -18,7 +18,7 @@ const menuItems = [
     { name: "Coupon List", icon: Ticket, path: "/coupons" },
     { name: "Theme", icon: Database, path: "/theme" },
     {
-        name: "Package", icon: Package, path: "/package"
+        name: "Package", icon: Package, path: "/packages"
     },
     { name: "Support Tickets", icon: LifeBuoy, path: "/support" },
 

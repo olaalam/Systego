@@ -18,7 +18,7 @@ const PaymentMethods = () => {
   const handleDelete = async (item) => {
     try {
       // ✅ استدعاء الـ API مع id
-      await deleteData(`/api/admin/payment-methods/delete_item/${item._id}`);
+      await deleteData(`/api/admin/payment-methods/${item._id}`);
       refetch();
     } finally {
       setDeleteTarget(null);
@@ -26,21 +26,9 @@ const PaymentMethods = () => {
   };
 
   const columns = [
-    { key: "code", header: "Code", filterable: true },
-    { key: "discount_type", header: "Type", filterable: true },
-    { key: "discount", header: "Discount", filterable: false },
-    {
-      key: "from",
-      header: "From",
-      filterable: false,
-      render: (value) => new Date(value).toLocaleDateString(),
-    },
-    {
-      key: "to",
-      header: "To",
-      filterable: false,
-      render: (value) => new Date(value).toLocaleDateString(),
-    },
+    { key: "name", header: "Name", filterable: true },
+    { key: "description", header: "Description", filterable: true },
+    { key: "logo", header: "Logo", filterable: false },
     {
       key: "status",
       header: "Status",
@@ -82,7 +70,7 @@ const PaymentMethods = () => {
         <DeleteDialog
           title="Delete payment-method"
           message={`Are you sure you want to delete payment-method "${
-            deleteTarget.code || deleteTarget._id
+            deleteTarget.code || deleteTarget.name
           }"?`}
           onConfirm={() => handleDelete(deleteTarget)}
           onCancel={() => setDeleteTarget(null)}

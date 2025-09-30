@@ -1,45 +1,24 @@
 // src/pages/clients.jsx
-import { useState } from "react";
 import DataTable from "@/components/DataTable";
 import Loader from "@/components/Loader";
-import DeleteDialog from "@/components/DeleteForm";
 import useGet from "@/hooks/useGet";
-import useDelete from "@/hooks/useDelete";
 
 const Clients = () => {
-  const { data, loading, error, refetch } = useGet("/api/admin/clients");
-  const { deleteData, loading: deleting } = useDelete(
-    "/api/admin/clients/delete"
-  );
+  const { data, loading, error } = useGet("/api/admin/clients");
 
-  const [deleteTarget, setDeleteTarget] = useState(null);
-  const clients = data?.data || [];
+  // ✅ الداتا الحقيقية للـ clients
+const clients = data?.data || [];
 
-  const handleDelete = async (item) => {
-    try {
-      // ✅ استدعاء الـ API مع id
-      await deleteData(`/api/admin/clients/delete_item/${item._id}`);
-      refetch();
-    } finally {
-      setDeleteTarget(null);
-    }
-  };
+console.log("Clients:", data?.data); // تحقق من هيكل البيانات
 
   const columns = [
-    { key: "code", header: "Code", filterable: true },
-    { key: "discount_type", header: "Type", filterable: true },
-    { key: "discount", header: "Discount", filterable: false },
+    { key: "company_name", header: "Company Name", filterable: true },
+    { key: "email", header: "Email", filterable: true },
     {
-      key: "from",
-      header: "From",
+      key: "package_id",
+      header: "Package",
       filterable: false,
-      render: (value) => new Date(value).toLocaleDateString(),
-    },
-    {
-      key: "to",
-      header: "To",
-      filterable: false,
-      render: (value) => new Date(value).toLocaleDateString(),
+      render: (value) => value?.name || "-", // ✅ نعرض اسم الباكدج
     },
     {
       key: "status",
@@ -48,10 +27,12 @@ const Clients = () => {
       render: (value) => (
         <span
           className={`px-2 py-1 rounded-full text-xs ${
-            value ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+            value === "active"
+              ? "bg-green-100 text-green-800"
+              : "bg-red-100 text-red-800"
           }`}
         >
-          {value ? "Active" : "Inactive"}
+          {value === "active" ? "Active" : "Inactive"}
         </span>
       ),
     },
@@ -65,30 +46,15 @@ const Clients = () => {
       <DataTable
         data={clients}
         columns={columns}
-        title="Coupon Management"
-        onAdd={() => alert("Add new coupon clicked!")}
-        onEdit={(item) => alert(`Edit coupon: ${item.code}`)}
-        onDelete={(item) => setDeleteTarget(item)} // 👈 فتح الديالوغ
-        addButtonText="Add Coupon"
+        title="Clients Management"
+        onAdd={() => alert("Add new client clicked!")}
+        addButtonText="Add Client"
         addPath="add"
-        editPath={(item) => `edit/${item._id}`}
         itemsPerPage={10}
         searchable={true}
         filterable={true}
+        showActions={false}
       />
-
-      {/* Delete Dialog */}
-      {deleteTarget && (
-        <DeleteDialog
-          title="Delete Coupon"
-          message={`Are you sure you want to delete coupon "${
-            deleteTarget.code || deleteTarget._id
-          }"?`}
-          onConfirm={() => handleDelete(deleteTarget)}
-          onCancel={() => setDeleteTarget(null)}
-          loading={deleting}
-        />
-      )}
     </div>
   );
 };

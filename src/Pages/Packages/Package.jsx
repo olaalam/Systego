@@ -7,7 +7,7 @@ import useGet from "@/hooks/useGet";
 import useDelete from "@/hooks/useDelete";
 
 const Packages = () => {
-  const { data, loading, error, refetch } = useGet("/api/admin/packages");
+  const { data, loading, error, refetch } = useGet("/api/admin/packages/");
   const { deleteData, loading: deleting } = useDelete(
     "/api/admin/packages/delete"
   );
@@ -26,21 +26,22 @@ const Packages = () => {
   };
 
   const columns = [
-    { key: "code", header: "Code", filterable: true },
-    { key: "discount_type", header: "Type", filterable: true },
-    { key: "discount", header: "Discount", filterable: false },
+    { key: "name", header: "Name", filterable: true },
+    { key: "description", header: "Description", filterable: true },
+    { key: "monthly_price", header: "monthly_price", filterable: false },
     {
-      key: "from",
-      header: "From",
+      key: "quarterly_price",
+      header: "quarterly_price",
       filterable: false,
-      render: (value) => new Date(value).toLocaleDateString(),
     },
     {
-      key: "to",
-      header: "To",
+      key: "half_yearly_price",
+      header: "half_yearly_price",
       filterable: false,
-      render: (value) => new Date(value).toLocaleDateString(),
     },
+
+    { key: "yearly_price", header: "yearly_price", filterable: false },
+
     {
       key: "status",
       header: "Status",
@@ -82,7 +83,7 @@ const Packages = () => {
         <DeleteDialog
           title="Delete package"
           message={`Are you sure you want to delete package "${
-            deleteTarget.code || deleteTarget._id
+            deleteTarget.code || deleteTarget.name
           }"?`}
           onConfirm={() => handleDelete(deleteTarget)}
           onCancel={() => setDeleteTarget(null)}
