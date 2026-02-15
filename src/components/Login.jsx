@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import login from "../assets/Login.jpg";
-import logo from "../assets/logo.png";
+import logo from "../assets/logo.jpg";
 
 import usePost from "@/hooks/usePost"; // ✅ هوك البوست
 

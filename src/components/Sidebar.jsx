@@ -6,7 +6,7 @@ import {
 } from "lucide-react"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { useState } from "react"
-import logo from "@/assets/logo.png"
+import logo from "@/assets/logo.jpg"
 
 const menuItems = [
     { name: "Dashboard", icon: LayoutDashboard, path: "/" },
