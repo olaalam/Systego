@@ -36,16 +36,7 @@ const ClientAdd = () => {
       options: packages.map((p) => ({ value: p._id, label: p.name })),
       required: true,
     },
-    {
-      key: "status",
-      label: "Status",
-      type: "select",
-      options: [
-        { value: "active", label: "Active" },
-        { value: "inactive", label: "Inactive" },
-      ],
-      required: true,
-    },
+
     { key: "logoBase64", label: "Logo", type: "image", required: true },
     {
       key: "status",
@@ -112,7 +103,7 @@ const ClientAdd = () => {
         onSubmit={handleSubmit}
         onCancel={() => navigate("/client")}
         initialData={{ status: "active" }}
-        initialData={{ status: "active" }}
+
       />
     </div>
   );
