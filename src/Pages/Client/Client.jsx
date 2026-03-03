@@ -10,8 +10,6 @@ import { RefreshCw, Server, Cpu, ShieldCheck, Play, ExternalLink } from "lucide-
 
 const Clients = () => {
   const { data, loading, error } = useGet("/api/admin/clients");
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalData, setModalData] = useState(null);
 
   // ✅ أوبجكت لتخزين الخطوة الحالية لكل عميل (0: لم يبدأ، 1: rebuild، وهكذا)
   const [clientSteps, setClientSteps] = useState({});
@@ -57,9 +55,6 @@ const Clients = () => {
 
       toast.update(toastId, { render: "Deployment finished!", type: "success", isLoading: false, autoClose: 3000 });
 
-      // فتح المودال لعرض النتيجة (الدومين)
-      setModalData(res.data);
-      setIsModalOpen(true);
 
     } catch (err) {
       setClientSteps(prev => ({ ...prev, [clientId]: 0 })); // إعادة التعيين في حال الخطأ
@@ -135,39 +130,6 @@ const Clients = () => {
     <div className="p-6 bg-gray-100 min-h-screen">
       <DataTable data={clients} columns={columns} title="Clients Management" addPath="add" onAdd={() => alert("Add new client clicked!")} />
 
-      {/* المودال لعرض رد الباك إند */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 animate-in fade-in duration-300">
-          <div className="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full border border-gray-100">
-            <div className="flex flex-col items-center text-center">
-              <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-4">
-                <ShieldCheck size={32} />
-              </div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">Success!</h2>
-              <p className="text-gray-500 mb-6">Your client's subdomain is now secure and ready.</p>
-
-              <div className="w-full bg-purple-50 p-4 rounded-xl border border-purple-100 mb-6">
-                <span className="text-xs font-bold text-purple-400 uppercase tracking-wider">Access Link</span>
-                <a
-                  href={modalData?.domain || "#"}
-                  target="_blank"
-                  className="block text-purple-700 font-semibold mt-1 break-all hover:underline"
-                >
-                  {modalData?.domain || "Processing link..."}
-                  <ExternalLink size={14} className="inline ml-1" />
-                </a>
-              </div>
-
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="w-full bg-gray-900 text-white py-3 rounded-xl font-medium hover:bg-black transition-colors"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
