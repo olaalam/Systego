@@ -17,6 +17,7 @@ const ClientAdd = () => {
         setPackages(res?.data?.data?.data);
       } catch (err) {
         console.error("Failed to fetch packages:", err);
+        toast.error("Failed to load packages");
       }
     };
     fetchPackages();
@@ -35,6 +36,16 @@ const ClientAdd = () => {
       options: packages.map((p) => ({ value: p._id, label: p.name })),
       required: true,
     },
+    {
+      key: "status",
+      label: "Status",
+      type: "select",
+      options: [
+        { value: "active", label: "Active" },
+        { value: "inactive", label: "Inactive" },
+      ],
+      required: true,
+    },
     { key: "logoBase64", label: "Logo", type: "image", required: true },
     {
       key: "status",
@@ -50,13 +61,7 @@ const ClientAdd = () => {
 
   const handleSubmit = async (data) => {
     try {
-      const res = await api.post("/api/admin/clients/", data);
-      const newClient = res.data;
-
-      if (newClient && newClient._id) {
-        sessionStorage.setItem("client_id", newClient._id);
-        sessionStorage.setItem("client_name", newClient.company_name);
-      }
+      await api.post("/api/admin/clients/", data);
       toast.success("Client added successfully!");
       navigate("/client");
     } catch (err) {
@@ -64,7 +69,31 @@ const ClientAdd = () => {
         err.response?.data?.error?.message ||
         err.response?.data?.message ||
         "Failed to add client";
+      const handleSubmit = async (data) => {
+        try {
+          const res = await api.post("/api/admin/clients/", data);
+          const newClient = res.data;
 
+          if (newClient && newClient._id) {
+            sessionStorage.setItem("client_id", newClient._id);
+            sessionStorage.setItem("client_name", newClient.company_name);
+          }
+          toast.success("Client added successfully!");
+          navigate("/client");
+        } catch (err) {
+          const message =
+            err.response?.data?.error?.message ||
+            err.response?.data?.message ||
+            "Failed to add client";
+
+          // ✅ لو فيه تفاصيل إضافية (details array) نعرضها كلها
+          if (err.response?.data?.error?.details) {
+            err.response.data.error.details.forEach((d) => toast.error(d));
+          } else {
+            toast.error(message);
+          }
+        }
+      };
       // ✅ لو فيه تفاصيل إضافية (details array) نعرضها كلها
       if (err.response?.data?.error?.details) {
         err.response.data.error.details.forEach((d) => toast.error(d));
@@ -82,6 +111,7 @@ const ClientAdd = () => {
         fields={fields}
         onSubmit={handleSubmit}
         onCancel={() => navigate("/client")}
+        initialData={{ status: "active" }}
         initialData={{ status: "active" }}
       />
     </div>
