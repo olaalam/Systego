@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 
 const PaymentMethodAdd = () => {
   const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const fields = [
     { key: "name", label: "Name", required: true },
@@ -16,26 +17,29 @@ const PaymentMethodAdd = () => {
   ];
 
   const handleSubmit = async (data) => {
+    setIsSubmitting(true);
     try {
       await api.post("/api/admin/payment-methods/", data);
       toast.success("Payment method added successfully!");
       navigate("/payment-methods");
     } catch (err) {
       // ✅ عرض الأخطاء من الـ API
-      const errorMessage = 
-        err.response?.data?.error?.message || 
-        err.response?.data?.message || 
+      const errorMessage =
+        err.response?.data?.error?.message ||
+        err.response?.data?.message ||
         "Failed to add payment method";
-      
+
       const errorDetails = err.response?.data?.error?.details;
-      
+
       if (errorDetails && Array.isArray(errorDetails)) {
         errorDetails.forEach(detail => toast.error(detail));
       } else {
         toast.error(errorMessage);
       }
-      
+
       console.error("❌ Error:", err.response?.data);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -48,6 +52,7 @@ const PaymentMethodAdd = () => {
         onSubmit={handleSubmit}
         onCancel={() => navigate("/payment-method")}
         initialData={{ status: true }}
+        loading={isSubmitting}
       />
     </div>
   );

@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 
 const CouponAdd = () => {
   const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const fields = [
     { key: "code", label: "Coupon Code", required: true },
@@ -27,12 +28,15 @@ const CouponAdd = () => {
   ];
 
   const handleSubmit = async (data) => {
+    setIsSubmitting(true);
     try {
       await api.post("/api/admin/coupons/add", data);
       toast.success("Coupon added successfully!");
       navigate("/coupons"); // 👈 رجوع لصفحة الكوبونات
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to add coupon");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -44,6 +48,7 @@ const CouponAdd = () => {
         onSubmit={handleSubmit}
         onCancel={() => navigate("/coupons")}
         initialData={{ status: true }}
+        loading={isSubmitting}
       />
     </div>
   );

@@ -7,6 +7,7 @@ import Loader from "@/components/Loader";
 
 export default function ThemeAdd() {
   const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { postData, loading } = usePost("/api/admin/themes/");
   const [formData, setFormData] = useState({
     name: "",
@@ -18,23 +19,25 @@ export default function ThemeAdd() {
     setFormData((prev) => ({ ...prev, [key]: value }));
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    const form = new FormData();
+    form.append("name", formData.name);
+    form.append("description", formData.description);
+    form.append("fileData", formData.fileData); // backend هيشوفه كـ file
 
-  const form = new FormData();
-  form.append("name", formData.name);
-  form.append("description", formData.description);
-  form.append("fileData", formData.fileData); // backend هيشوفه كـ file
-
-  try {
-    await postData(form, null, true); 
-    toast.success("Theme added successfully!");
-    navigate("/theme");
-  } catch (err) {
-    toast.error("Failed to add theme.",err);
-    console.error(err);
-  }
-};
+    try {
+      await postData(form, null, true);
+      toast.success("Theme added successfully!");
+      navigate("/theme");
+    } catch (err) {
+      toast.error("Failed to add theme.", err);
+      console.error(err);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
 
   return (

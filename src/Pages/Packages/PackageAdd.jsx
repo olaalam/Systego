@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 
 const PackageAdd = () => {
   const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const fields = [
     { key: "name", label: "package Name", required: true },
@@ -40,12 +41,15 @@ const PackageAdd = () => {
   ];
 
   const handleSubmit = async (data) => {
+    setIsSubmitting(true);
     try {
       await api.post("/api/admin/packages/add", data);
       toast.success("package added successfully!");
       navigate("/packages"); // 👈 رجوع لصفحة الكوبونات
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to add package");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -57,6 +61,7 @@ const PackageAdd = () => {
         onSubmit={handleSubmit}
         onCancel={() => navigate("/packages")}
         initialData={{ status: true }}
+        loading={isSubmitting}
       />
     </div>
   );
