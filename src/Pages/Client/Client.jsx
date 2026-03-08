@@ -7,13 +7,18 @@ import api from "@/api/api";
 import { toast } from "react-toastify";
 // استيراد الأيقونات المطلوبة
 import { RefreshCw, Server, Cpu, ShieldCheck, Play, ExternalLink } from "lucide-react";
+import DeleteDialog from "@/components/DeleteForm";
+import useDelete from "@/hooks/useDelete";
 
 const Clients = () => {
   const { data, loading, error } = useGet("/api/admin/clients");
-
+  const { deleteData, loading: deleting } = useDelete(
+    "/api/admin/clients/"
+  );
   // ✅ أوبجكت لتخزين الخطوة الحالية لكل عميل (0: لم يبدأ، 1: rebuild، وهكذا)
   const [clientSteps, setClientSteps] = useState({});
 
+  const [deleteTarget, setDeleteTarget] = useState(null);
   const clients = data?.data || [];
 
   const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -62,6 +67,15 @@ const Clients = () => {
     }
   };
 
+  const handleDelete = async (item) => {
+    try {
+      // ✅ استدعاء الـ API مع id
+      await deleteData(`/api/admin/clients/${item._id}`);
+      refetch();
+    } finally {
+      setDeleteTarget(null);
+    }
+  };
   const columns = [
     { key: "company_name", header: "Company Name" },
     { key: "email", header: "Email" },
@@ -128,7 +142,30 @@ const Clients = () => {
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
-      <DataTable data={clients} columns={columns} title="Clients Management" addPath="add" onAdd={() => alert("Add new client clicked!")} />
+      <DataTable
+        data={clients}
+        columns={columns}
+        title="Client Management"
+        onAdd={() => alert("Add new client clicked!")}
+        onEdit={(item) => alert(`Edit client: ${item.company_name}`)}
+        onDelete={(item) => setDeleteTarget(item)}
+        addButtonText="Add Client"
+        addPath="add"
+        editPath={(item) => `edit/${item._id}`}
+        itemsPerPage={10}
+        searchable={true}
+        filterable={true}
+      />
+      {deleteTarget && (
+        <DeleteDialog
+          title="Delete Client"
+          message={`Are you sure you want to delete client "${deleteTarget.company_name || deleteTarget._id
+            }"?`}
+          onConfirm={() => handleDelete(deleteTarget)}
+          onCancel={() => setDeleteTarget(null)}
+          loading={deleting}
+        />
+      )}
 
     </div>
   );
