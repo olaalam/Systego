@@ -42,6 +42,10 @@ const Clients = () => {
       toast.update(toastId, { render: "Step 2: Deploying Backend..." });
       await api.post(`/api/admin/clients/${sessionClientId}/deploy-backend`);
 
+
+      // انتظار 10 ثانية
+      toast.update(toastId, { render: "Waiting 10 seconds for system sync..." });
+      await delay(10000);
       // الانتقال للخطوة 3
       setClientSteps(prev => ({ ...prev, [clientId]: 3 }));
       toast.update(toastId, { render: "Step 3: Installing Dependencies..." });
@@ -49,9 +53,9 @@ const Clients = () => {
         clientName: sessionClientName,
       });
 
-      // انتظار 15 ثانية
-      toast.update(toastId, { render: "Waiting 15 seconds for system sync..." });
-      await delay(15000);
+      // انتظار 40 ثانية
+      toast.update(toastId, { render: "Waiting 40 seconds for system sync..." });
+      await delay(40000);
 
       // الانتقال للخطوة 4 (الأخيرة)
       setClientSteps(prev => ({ ...prev, [clientId]: 4 }));
@@ -71,7 +75,7 @@ const Clients = () => {
     try {
       // ✅ استدعاء الـ API مع id
       await deleteData(`/api/admin/clients/${item._id}`);
-      refetch();
+      deleteData();
     } finally {
       setDeleteTarget(null);
     }
