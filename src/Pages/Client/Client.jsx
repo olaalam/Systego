@@ -49,8 +49,7 @@ const Clients = () => {
       // الانتقال للخطوة 3
       setClientSteps(prev => ({ ...prev, [clientId]: 3 }));
       toast.update(toastId, { render: "Step 3: Installing Dependencies..." });
-      await api.post(`/api/admin/clients/install-dependencies`, {
-        clientName: sessionClientName,
+      await api.post(`/api/admin/clients/${clientId}/install-dependencies`, {
       });
 
       // انتظار 40 ثانية
