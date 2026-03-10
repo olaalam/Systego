@@ -11,7 +11,7 @@ import DeleteDialog from "@/components/DeleteForm";
 import useDelete from "@/hooks/useDelete";
 
 const Clients = () => {
-  const { data, loading, error } = useGet("/api/admin/clients");
+  const { data, loading, error, refetch } = useGet("/api/admin/clients");
   const { deleteData, loading: deleting } = useDelete(
     "/api/admin/clients/"
   );
@@ -74,7 +74,7 @@ const Clients = () => {
     try {
       // ✅ استدعاء الـ API مع id
       await deleteData(`/api/admin/clients/${item._id}`);
-      deleteData();
+      refetch();
     } finally {
       setDeleteTarget(null);
     }
