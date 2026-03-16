@@ -18,6 +18,7 @@ import PaymentMethodEdit from "./Pages/PaymentMethod/PaymentMethodEdit";
 import Package from "./Pages/Packages/Package";
 import ThemeAdd from "./Pages/Theme/ThemeAdd";
 import ThemeEdit from "./Pages/Theme/ThemeEdit";
+import ClientEdit from "./Pages/Client/ClientEdit";
 export default function AppRoutes() {
   return (
     <Routes>
@@ -76,6 +77,14 @@ export default function AppRoutes() {
           element={
             <ProtectedRoute>
               <ClientAdd />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="edit/:id"
+          element={
+            <ProtectedRoute>
+              <ClientEdit />
             </ProtectedRoute>
           }
         />

@@ -47,9 +47,8 @@ const Coupons = () => {
       filterable: true,
       render: (value) => (
         <span
-          className={`px-2 py-1 rounded-full text-xs ${
-            value ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-          }`}
+          className={`px-2 py-1 rounded-full text-xs ${value ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+            }`}
         >
           {value ? "Active" : "Inactive"}
         </span>
@@ -68,7 +67,7 @@ const Coupons = () => {
         title="Coupon Management"
         onAdd={() => alert("Add new coupon clicked!")}
         onEdit={(item) => alert(`Edit coupon: ${item.code}`)}
-        onDelete={(item) => setDeleteTarget(item)} // 👈 فتح الديالوغ
+        onDelete={(item) => setDeleteTarget(item)}
         addButtonText="Add Coupon"
         addPath="add"
         editPath={(item) => `edit/${item._id}`}
@@ -81,9 +80,8 @@ const Coupons = () => {
       {deleteTarget && (
         <DeleteDialog
           title="Delete Coupon"
-          message={`Are you sure you want to delete coupon "${
-            deleteTarget.code || deleteTarget._id
-          }"?`}
+          message={`Are you sure you want to delete coupon "${deleteTarget.code || deleteTarget._id
+            }"?`}
           onConfirm={() => handleDelete(deleteTarget)}
           onCancel={() => setDeleteTarget(null)}
           loading={deleting}
