@@ -1,5 +1,5 @@
 // src/pages/CouponAdd.jsx
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AddPage from "@/components/AddPage";
 import api from "@/api/api";
