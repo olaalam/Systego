@@ -23,7 +23,7 @@ export default function PackageEdit() {
         const res = await api.get(`/api/admin/packages/${id}`);
         setpackageData(res.data?.data?.data);
         console.log("Fetched package data:", res.data.data.data);
-        
+
       } catch (err) {
         toast.error("Failed to fetch package data");
         console.error("❌ Error fetching package:", err);
@@ -53,21 +53,23 @@ export default function PackageEdit() {
       <Loader />
     );
   }
-const packageFields = [
-  { key: "name", label: "Name", required: true },
-  { key: "description", label: "Description", type: "text" },
-  { key: "monthly_price", label: "Monthly Price", type: "number", required: true },
-  { key: "quarterly_price", label: "Quarterly Price", type: "number" },
-  { key: "half_yearly_price", label: "Half-Yearly Price", type: "number" },
-  { key: "yearly_price", label: "Yearly Price", type: "number" },
-  { key: "status", label: "Active", type: "checkbox" },
-];
+  const packageFields = [
+    { key: "name", label: "Name", required: true },
+    { key: "description", label: "Description", type: "text" },
+    { key: "monthly_price", label: "Monthly Price", type: "number", required: true },
+    { key: "quarterly_price", label: "Quarterly Price", type: "number" },
+    { key: "half_yearly_price", label: "Half-Yearly Price", type: "number" },
+    { key: "yearly_price", label: "Yearly Price", type: "number" },
+    { key: "haveEcommerce", label: "Ecommerce Support", type: "checkbox" },
+    { key: "haveMobileApp", label: "Mobile App Support", type: "checkbox" },
+    { key: "status", label: "Active", type: "checkbox" },
+  ];
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       {packageData && (
         <AddPage
-        title={`Edit package: ${packageData?.code || "..."}`}
+          title={`Edit package: ${packageData?.code || "..."}`}
           fields={packageFields}
           initialData={packageData} // Pass the fetched data
           onSubmit={handleSubmit}

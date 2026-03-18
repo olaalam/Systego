@@ -41,16 +41,40 @@ const Packages = () => {
     },
 
     { key: "yearly_price", header: "yearly_price", filterable: false },
-
+    {
+      key: "haveEcommerce",
+      header: "Ecommerce Support",
+      filterable: true,
+      render: (value) => (
+        <span
+          className={`px-2 py-1 rounded-full text-xs ${value ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+            }`}
+        >
+          {value ? "Yes" : "No"}
+        </span>
+      ),
+    },
+    {
+      key: "haveMobileApp",
+      header: "Mobile App Support",
+      filterable: true,
+      render: (value) => (
+        <span
+          className={`px-2 py-1 rounded-full text-xs ${value ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+            }`}
+        >
+          {value ? "Yes" : "No"}
+        </span>
+      ),
+    },
     {
       key: "status",
       header: "Status",
       filterable: true,
       render: (value) => (
         <span
-          className={`px-2 py-1 rounded-full text-xs ${
-            value ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-          }`}
+          className={`px-2 py-1 rounded-full text-xs ${value ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+            }`}
         >
           {value ? "Active" : "Inactive"}
         </span>
@@ -82,9 +106,8 @@ const Packages = () => {
       {deleteTarget && (
         <DeleteDialog
           title="Delete package"
-          message={`Are you sure you want to delete package "${
-            deleteTarget.code || deleteTarget.name
-          }"?`}
+          message={`Are you sure you want to delete package "${deleteTarget.code || deleteTarget.name
+            }"?`}
           onConfirm={() => handleDelete(deleteTarget)}
           onCancel={() => setDeleteTarget(null)}
           loading={deleting}

@@ -35,6 +35,8 @@ const PackageAdd = () => {
       type: "number",
       required: true,
     },
+    { key: "haveEcommerce", label: "Ecommerce Support", type: "checkbox" },
+    { key: "haveMobileApp", label: "Mobile App Support", type: "checkbox" },
 
     { key: "status", label: "Active", type: "checkbox" },
   ];
