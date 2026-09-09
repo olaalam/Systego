@@ -2,7 +2,7 @@ import { Link } from "react-router-dom"
 import { Menu } from "lucide-react"
 import {
     LayoutDashboard, Monitor, Users, CreditCard, Ticket, Package,
-    Database, LifeBuoy, Settings, Mail, Puzzle, BookOpen
+    Database, LifeBuoy, Settings, Mail, Puzzle, BookOpen, FolderOpen
 } from "lucide-react"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { useState } from "react"
@@ -17,6 +17,8 @@ const menuItems = [
     { name: "PaymentMethod", icon: CreditCard, path: "/payment-method" },
     { name: "Coupon List", icon: Ticket, path: "/coupons" },
     { name: "Theme", icon: Database, path: "/theme" },
+    { name: "Theme Categories", icon: FolderOpen, path: "/theme-categories" },
+    { name: "Template", icon: Puzzle, path: "/template" },
     {
         name: "Package", icon: Package, path: "/packages"
     },
