@@ -18,7 +18,7 @@ const menuItems = [
     { name: "Coupon List", icon: Ticket, path: "/coupons" },
     { name: "Theme", icon: Database, path: "/theme" },
     { name: "Theme Categories", icon: FolderOpen, path: "/theme-categories" },
-    { name: "Template", icon: Puzzle, path: "/template" },
+    // { name: "Template", icon: Puzzle, path: "/template" },
     {
         name: "Package", icon: Package, path: "/packages"
     },
