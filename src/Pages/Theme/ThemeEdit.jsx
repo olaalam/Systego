@@ -23,17 +23,25 @@ export default function ThemeEdit() {
   const { id } = useParams();
   const navigate = useNavigate();
   
-  // 1. جلب بيانات الثيم باستخدام useGet (ملاحظة: useGet يخزن res.data.data مباشرة)
+  // 1. جلب بيانات الثيم
   const { data: theme, loading: getLoading, error: getError } = useGet(`/api/admin/themes/${id}`);
   
-  // 2. استخدام usePut الخاص بك للتحديث
+  // 2. جلب الأقسام من الـ Endpoint الصحيح
+  const { data: categoriesRes } = useGet("/api/admin/theme-categories");
+  
+  // 3. استخدام usePut للتحديث
   const { putData, loading: saving } = usePut(`/api/admin/themes/${id}`);
+
+  // استخراج الأقسام بأمان بناءً على شكل الـ Response
+  const rawCategories = categoriesRes?.data?.categories ?? categoriesRes?.categories ?? [];
+  const categories = Array.isArray(rawCategories) ? rawCategories : [];
 
   // حالة الفورم (Form State)
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     isBase: false,
+    categoryId: "",
     defaultConfig: {
       colorKeys: [],
       fontOptions: []
@@ -56,23 +64,23 @@ export default function ThemeEdit() {
     };
   }, []);
 
-  // تعبئة البيانات عند التحميل من useGet
-useEffect(() => {
-  // فحص ما إذا كانت البيانات داخل theme.data بسبب تجويف الـ Backend
-  const actualTheme = theme?.data || theme;
+  // تعبئة البيانات عند التحميل والتعامل مع الريسبونس المتداخل
+  useEffect(() => {
+    const actualTheme = theme?.data?.data || theme?.data || theme;
 
-  if (actualTheme) {
-    setFormData({
-      name: actualTheme.name || "",
-      description: actualTheme.description || "",
-      isBase: actualTheme.isBase || false,
-      defaultConfig: {
-        colorKeys: actualTheme.defaultConfig?.colorKeys || [],
-        fontOptions: actualTheme.defaultConfig?.fontOptions || []
-      }
-    });
-  }
-}, [theme]);
+    if (actualTheme && actualTheme._id) {
+      setFormData({
+        name: actualTheme.name || "",
+        description: actualTheme.description || "",
+        isBase: actualTheme.isBase || false,
+        categoryId: actualTheme.categoryId || "",
+        defaultConfig: {
+          colorKeys: actualTheme.defaultConfig?.colorKeys || [],
+          fontOptions: actualTheme.defaultConfig?.fontOptions || []
+        }
+      });
+    }
+  }, [theme]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -82,7 +90,6 @@ useEffect(() => {
     }));
   };
 
-  // دالة إضافة عنصر للمصفوفات بدون تكرار
   const handleAddConfigItem = (field, value) => {
     if (!value || !value.trim()) return;
     const trimmedVal = value.trim();
@@ -101,7 +108,6 @@ useEffect(() => {
     }));
   };
 
-  // دالة حذف عنصر من المصفوفات
   const handleRemoveConfigItem = (field, index) => {
     setFormData((prev) => ({
       ...prev,
@@ -112,7 +118,6 @@ useEffect(() => {
     }));
   };
 
-  // دالة الحفظ باستخدام usePut
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -157,6 +162,25 @@ useEffect(() => {
             rows="3"
             className="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-primary"
           />
+        </div>
+
+        {/* Category */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+          <select
+            name="categoryId"
+            value={formData.categoryId}
+            onChange={handleChange}
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-primary bg-white"
+            required
+          >
+            <option value="" disabled>Select a category</option>
+            {categories.map((cat) => (
+              <option key={cat._id} value={cat._id}>
+                {cat.name} {cat.ar_name ? `(${cat.ar_name})` : ""}
+              </option>
+            ))}
+          </select>
         </div>
 
         {/* isBase Switch */}
@@ -237,14 +261,13 @@ useEffect(() => {
 
         <hr className="border-gray-200" />
 
-        {/* 🔤 Font Options مع المعاينة الحية */}
+        {/* 🔤 Font Options */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Selected Font Options</label>
           <p className="text-xs text-gray-500 mb-3">
             These are the active font choices for this theme.
           </p>
 
-          {/* 1. الخطوط المختارة حالياً */}
           <div className="flex flex-wrap gap-2 mb-6">
             {formData.defaultConfig.fontOptions.length === 0 ? (
               <span className="text-xs text-gray-400 italic bg-gray-50 p-3 rounded-lg w-full block border border-dashed text-center">
@@ -277,7 +300,6 @@ useEffect(() => {
             )}
           </div>
 
-          {/* 2. معرض الخطوط مع عينات حية */}
           <div className="space-y-3">
             <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider">
               Font Preview Gallery (Click to Add)
@@ -332,7 +354,6 @@ useEffect(() => {
             </div>
           </div>
 
-          {/* 3. إضافة خط مخصص */}
           <div className="mt-4 pt-3 border-t border-gray-100">
             <label className="block text-xs font-medium text-gray-600 mb-1">
               Add Unlisted Custom Font

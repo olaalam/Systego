@@ -10,7 +10,12 @@ import { useNavigate } from "react-router-dom";
 import DeleteDialog from "@/components/DeleteForm";
 
 export default function ThemesPage() {
+  // جلب قائمة الثيمات
   const { data, loading, error } = useGet("/api/admin/themes/");
+  
+  // جلب الأقسام من الـ Endpoint الصحيح
+  const { data: categoriesRes } = useGet("/api/admin/theme-categories");
+  
   const { deleteData, loading: deleteLoading } = useDelete();
   const [themes, setThemes] = useState([]);
   const navigate = useNavigate();
@@ -18,22 +23,29 @@ export default function ThemesPage() {
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
 
+  // 🔍 استخراج مصفوفة الكاتيجوريز بأمان
+  const rawCategories = categoriesRes?.data?.categories ?? categoriesRes?.categories ?? [];
+  const categories = Array.isArray(rawCategories) ? rawCategories : [];
+  
+  const categoryNameById = categories.reduce((acc, cat) => {
+    acc[cat._id] = cat.ar_name || cat.name;
+    return acc;
+  }, {});
+
   useEffect(() => {
     // 🔍 استخراج مصفوفة الثيمات بأمان بغض النظر عن مستوى التغليف (Nested Data)
-    const rawList = Array.isArray(data?.data)
-      ? data.data
-      : Array.isArray(data)
-      ? data
-      : [];
+    const rawList = data?.data?.data || data?.data || data || [];
+    const themesArray = Array.isArray(rawList) ? rawList : [];
 
-    if (rawList.length > 0) {
+    if (themesArray.length > 0) {
       setThemes(
-        rawList.map((t) => ({
+        themesArray.map((t) => ({
           id: t._id,
           name: t.name || "Untitled Theme",
           description: t.description || "No description provided",
           theme: t.theme,
           isBase: t.isBase || false,
+          categoryId: t.categoryId || null,
           colorCount: t.defaultConfig?.colorKeys?.length || 0,
           fontCount: t.defaultConfig?.fontOptions?.length || 0,
         }))
@@ -91,6 +103,11 @@ export default function ThemesPage() {
                   </span>
                 )}
               </div>
+              {theme.categoryId && (
+                <span className="inline-block text-[10px] bg-emerald-100 text-emerald-700 font-semibold px-2 py-0.5 rounded-full mt-1 w-fit">
+                  {categoryNameById[theme.categoryId] || "Uncategorized"}
+                </span>
+              )}
               <p className="text-sm text-gray-500 line-clamp-2">{theme.description}</p>
             </CardHeader>
 
@@ -118,17 +135,6 @@ export default function ThemesPage() {
             </CardContent>
           </Card>
         ))}
-
-        {/* زرار إضافة ثيم جديد */}
-        {/* <button
-          onClick={() => navigate("/theme/add")}
-          className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-xl p-8 hover:bg-purple-50/50 hover:border-purple-300 transition group min-h-[220px]"
-        >
-          <Plus className="w-8 h-8 text-gray-400 group-hover:text-purple-600 mb-2 transition" />
-          <span className="text-sm font-semibold text-gray-600 group-hover:text-purple-600 transition">
-            Add New Theme
-          </span>
-        </button> */}
       </div>
 
       {/* 🗑️ Delete Dialog */}
