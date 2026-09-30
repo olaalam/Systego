@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import AddPage from "@/components/AddPage";
 import api from "@/api/api";
 import { toast } from "react-toastify";
+
 const PackageAdd = () => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -37,6 +38,10 @@ const PackageAdd = () => {
     },
     { key: "haveEcommerce", label: "Ecommerce Support", type: "checkbox" },
     { key: "haveMobileApp", label: "Mobile App Support", type: "checkbox" },
+    // ✅ الحقول الجديدة
+    { key: "havePOS", label: "POS Support", type: "checkbox" },
+    { key: "haveReports", label: "Reports Support", type: "checkbox" },
+    { key: "haveStockTake", label: "Stock Take Support", type: "checkbox" },
 
     { key: "status", label: "Active", type: "checkbox" },
   ];
@@ -46,7 +51,7 @@ const PackageAdd = () => {
     try {
       await api.post("/api/admin/packages/add", data);
       toast.success("package added successfully!");
-      navigate("/packages"); // 👈 رجوع لصفحة الكوبونات
+      navigate("/packages"); // 👈 رجوع لصفحة الباكدجات
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to add package");
     } finally {

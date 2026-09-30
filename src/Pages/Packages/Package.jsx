@@ -39,7 +39,6 @@ const Packages = () => {
       header: "half_yearly_price",
       filterable: false,
     },
-
     { key: "yearly_price", header: "yearly_price", filterable: false },
     {
       key: "haveEcommerce",
@@ -58,6 +57,49 @@ const Packages = () => {
     {
       key: "haveMobileApp",
       header: "Mobile App Support",
+      filterable: true,
+      render: (value) => (
+        <span
+          className={`px-2 py-1 rounded-full text-xs ${
+            value ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+          }`}
+        >
+          {value ? "Yes" : "No"}
+        </span>
+      ),
+    },
+    // ✅ الحقول الجديدة
+    {
+      key: "havePOS",
+      header: "POS Support",
+      filterable: true,
+      render: (value) => (
+        <span
+          className={`px-2 py-1 rounded-full text-xs ${
+            value ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+          }`}
+        >
+          {value ? "Yes" : "No"}
+        </span>
+      ),
+    },
+    {
+      key: "haveReports",
+      header: "Reports Support",
+      filterable: true,
+      render: (value) => (
+        <span
+          className={`px-2 py-1 rounded-full text-xs ${
+            value ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+          }`}
+        >
+          {value ? "Yes" : "No"}
+        </span>
+      ),
+    },
+    {
+      key: "haveStockTake",
+      header: "Stock Take Support",
       filterable: true,
       render: (value) => (
         <span
