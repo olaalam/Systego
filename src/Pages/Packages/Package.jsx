@@ -9,7 +9,7 @@ import useDelete from "@/hooks/useDelete";
 const Packages = () => {
   const { data, loading, error, refetch } = useGet("/api/admin/packages/");
   const { deleteData, loading: deleting } = useDelete(
-    "/api/admin/packages/delete"
+    "/api/admin/packages/delete",
   );
 
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -47,8 +47,9 @@ const Packages = () => {
       filterable: true,
       render: (value) => (
         <span
-          className={`px-2 py-1 rounded-full text-xs ${value ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-            }`}
+          className={`px-2 py-1 rounded-full text-xs ${
+            value ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+          }`}
         >
           {value ? "Yes" : "No"}
         </span>
@@ -60,8 +61,9 @@ const Packages = () => {
       filterable: true,
       render: (value) => (
         <span
-          className={`px-2 py-1 rounded-full text-xs ${value ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-            }`}
+          className={`px-2 py-1 rounded-full text-xs ${
+            value ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+          }`}
         >
           {value ? "Yes" : "No"}
         </span>
@@ -73,8 +75,9 @@ const Packages = () => {
       filterable: true,
       render: (value) => (
         <span
-          className={`px-2 py-1 rounded-full text-xs ${value ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-            }`}
+          className={`px-2 py-1 rounded-full text-xs ${
+            value ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+          }`}
         >
           {value ? "Active" : "Inactive"}
         </span>
@@ -106,8 +109,9 @@ const Packages = () => {
       {deleteTarget && (
         <DeleteDialog
           title="Delete package"
-          message={`Are you sure you want to delete package "${deleteTarget.code || deleteTarget.name
-            }"?`}
+          message={`Are you sure you want to delete package "${
+            deleteTarget.code || deleteTarget.name
+          }"?`}
           onConfirm={() => handleDelete(deleteTarget)}
           onCancel={() => setDeleteTarget(null)}
           loading={deleting}
