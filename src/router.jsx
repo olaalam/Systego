@@ -19,6 +19,11 @@ import Package from "./Pages/Packages/Package";
 import ThemeAdd from "./Pages/Theme/ThemeAdd";
 import ThemeEdit from "./Pages/Theme/ThemeEdit";
 import ClientEdit from "./Pages/Client/ClientEdit";
+import ThemeCategoriesPage from "./Pages/ThemeCategories/ThemeCategories";
+import ThemeCategoriesAdd from "./Pages/ThemeCategories/ThemeCategoriesAdd";
+import ThemeCategoriesEdit from "./Pages/ThemeCategories/ThemeCategoriesEdit";
+import TemplatePage from "./Pages/Templates/Template";
+
 export default function AppRoutes() {
   return (
     <Routes>
@@ -167,6 +172,44 @@ export default function AppRoutes() {
           element={
             <ProtectedRoute>
               <PaymentMethodEdit />
+            </ProtectedRoute>
+          }
+        />
+      </Route>
+
+      <Route path="theme-categories">
+        <Route
+          index
+          element={
+            <ProtectedRoute>
+              <ThemeCategoriesPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="add"
+          element={
+            <ProtectedRoute>
+              <ThemeCategoriesAdd />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="edit/:id"
+          element={
+            <ProtectedRoute>
+              <ThemeCategoriesEdit />
+            </ProtectedRoute>
+          }
+        />
+      </Route>
+
+      <Route path="template">
+        <Route
+          index
+          element={
+            <ProtectedRoute>
+              <TemplatePage />
             </ProtectedRoute>
           }
         />
