@@ -6,7 +6,7 @@ import ClientAdd from "@/Pages/Client/ClientAdd";
 import Theme from "@/Pages/Theme/Theme";
 import LoginPage from "@/components/Login";
 import NotFoundPage from "@/Pages/NotFound";
-import ProtectedRoute from "@/components/ProtectedRoute"; // ✅
+import ProtectedRoute from "@/components/ProtectedRoute";
 import Coupons from "./Pages/Coupons/Coupons";
 import CouponAdd from "./Pages/Coupons/CouponAdd";
 import CouponEdit from "./Pages/Coupons/CouponEdit";
@@ -25,28 +25,40 @@ import ThemeCategoriesEdit from "./Pages/ThemeCategories/ThemeCategoriesEdit";
 import TemplatePage from "./Pages/Templates/Template";
 import OperationReports from "./Pages/OperationReports/OperationReports";
 import OperationReportView from "./Pages/OperationReports/OperationReportView";
+import CreateAdmin from "./Pages/Admins/CreateAdmin";
 
 export default function AppRoutes() {
   return (
     <Routes>
-      {/* ✅ Auth */}
+      {/* ✅ Auth (مفتوح) */}
       <Route path="/login" element={<LoginPage />} />
 
-      {/* ✅ Main Pages محمية */}
+      {/* ✅ Dashboard (super_admin بس) */}
       <Route
         path="/"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requiredRole="super_admin">
             <Dashboard />
           </ProtectedRoute>
         }
       />
-      {/* ✅ Theme (Nested Routes محمية) */}
+
+      {/* ✅ Create Admin (super_admin بس) */}
+      <Route
+        path="create-admin"
+        element={
+          <ProtectedRoute>
+            <CreateAdmin />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* ✅ Theme (super_admin بس) */}
       <Route path="theme">
         <Route
           index
           element={
-            <ProtectedRoute>
+            <ProtectedRoute requiredRole="super_admin">
               <Theme />
             </ProtectedRoute>
           }
@@ -54,7 +66,7 @@ export default function AppRoutes() {
         <Route
           path="add"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute requiredRole="super_admin">
               <ThemeAdd />
             </ProtectedRoute>
           }
@@ -62,19 +74,19 @@ export default function AppRoutes() {
         <Route
           path="edit/:id"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute requiredRole="super_admin">
               <ThemeEdit />
             </ProtectedRoute>
           }
         />
       </Route>
 
-      {/* ✅ Client (Nested Routes محمية) */}
+      {/* ✅ Client (super_admin بس) */}
       <Route path="client">
         <Route
           index
           element={
-            <ProtectedRoute>
+            <ProtectedRoute requiredRole="super_admin">
               <Client />
             </ProtectedRoute>
           }
@@ -82,7 +94,7 @@ export default function AppRoutes() {
         <Route
           path="add"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute requiredRole="super_admin">
               <ClientAdd />
             </ProtectedRoute>
           }
@@ -90,19 +102,19 @@ export default function AppRoutes() {
         <Route
           path="edit/:id"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute requiredRole="super_admin">
               <ClientEdit />
             </ProtectedRoute>
           }
         />
       </Route>
 
-      {/* ✅ Coupons (Nested Routes محمية) */}
+      {/* ✅ Coupons (super_admin بس) */}
       <Route path="coupons">
         <Route
           index
           element={
-            <ProtectedRoute>
+            <ProtectedRoute requiredRole="super_admin">
               <Coupons />
             </ProtectedRoute>
           }
@@ -110,7 +122,7 @@ export default function AppRoutes() {
         <Route
           path="add"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute requiredRole="super_admin">
               <CouponAdd />
             </ProtectedRoute>
           }
@@ -118,18 +130,19 @@ export default function AppRoutes() {
         <Route
           path="edit/:id"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute requiredRole="super_admin">
               <CouponEdit />
             </ProtectedRoute>
           }
         />
       </Route>
-      {/* ✅ Package (Nested Routes محمية) */}
+
+      {/* ✅ Package (super_admin بس) */}
       <Route path="packages">
         <Route
           index
           element={
-            <ProtectedRoute>
+            <ProtectedRoute requiredRole="super_admin">
               <Package />
             </ProtectedRoute>
           }
@@ -137,7 +150,7 @@ export default function AppRoutes() {
         <Route
           path="add"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute requiredRole="super_admin">
               <PackageAdd />
             </ProtectedRoute>
           }
@@ -145,18 +158,19 @@ export default function AppRoutes() {
         <Route
           path="edit/:id"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute requiredRole="super_admin">
               <PackageEdit />
             </ProtectedRoute>
           }
         />
       </Route>
-      {/* ✅ PaymentMethod (Nested Routes محمية) */}
+
+      {/* ✅ PaymentMethod (super_admin بس) */}
       <Route path="payment-method">
         <Route
           index
           element={
-            <ProtectedRoute>
+            <ProtectedRoute requiredRole="super_admin">
               <PaymentMethods />
             </ProtectedRoute>
           }
@@ -164,7 +178,7 @@ export default function AppRoutes() {
         <Route
           path="add"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute requiredRole="super_admin">
               <PaymentMethodAdd />
             </ProtectedRoute>
           }
@@ -172,18 +186,19 @@ export default function AppRoutes() {
         <Route
           path="edit/:id"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute requiredRole="super_admin">
               <PaymentMethodEdit />
             </ProtectedRoute>
           }
         />
       </Route>
 
+      {/* ✅ Theme Categories (super_admin بس) */}
       <Route path="theme-categories">
         <Route
           index
           element={
-            <ProtectedRoute>
+            <ProtectedRoute requiredRole="super_admin">
               <ThemeCategoriesPage />
             </ProtectedRoute>
           }
@@ -191,7 +206,7 @@ export default function AppRoutes() {
         <Route
           path="add"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute requiredRole="super_admin">
               <ThemeCategoriesAdd />
             </ProtectedRoute>
           }
@@ -199,23 +214,26 @@ export default function AppRoutes() {
         <Route
           path="edit/:id"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute requiredRole="super_admin">
               <ThemeCategoriesEdit />
             </ProtectedRoute>
           }
         />
       </Route>
 
+      {/* ✅ Template (super_admin بس) */}
       <Route path="template">
         <Route
           index
           element={
-            <ProtectedRoute>
+            <ProtectedRoute requiredRole="super_admin">
               <TemplatePage />
             </ProtectedRoute>
           }
         />
       </Route>
+
+      {/* ✅ Operation Reports (الكل يدخلها — super_admin + viewer) */}
       <Route path="operation-reports">
         <Route
           index

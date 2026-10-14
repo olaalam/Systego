@@ -6,11 +6,7 @@ import { z } from "zod";
 import { useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -23,9 +19,8 @@ import { Input } from "@/components/ui/input";
 import login from "../assets/Login.jpg";
 import logo from "../assets/logo.jpg";
 
-import usePost from "@/hooks/usePost"; // ✅ هوك البوست
+import usePost from "@/hooks/usePost";
 
-// ✅ validation schema الصحيح
 const formSchema = z.object({
   email: z
     .string()
@@ -40,7 +35,6 @@ const formSchema = z.object({
 export default function LoginPage() {
   const navigate = useNavigate();
 
-  // ✅ استدعاء الهوك مع URL
   const { postData, loading } = usePost("/api/admin/auth/login");
 
   const form = useForm({
@@ -51,24 +45,26 @@ export default function LoginPage() {
     },
   });
 
-  // ✅ submit handler
   async function onSubmit(values) {
     try {
-      const res = await postData(values); // التوست جوه الهوك
+      const res = await postData(values);
 
       if (res.success) {
         const { token, admin } = res.data;
 
-        // تخزين البيانات
+        // ✅ تخزين البيانات
         localStorage.setItem("token", token);
         localStorage.setItem("admin", JSON.stringify(admin));
 
-        // ✅ بعد النجاح يروح للصفحة الرئيسية
-        navigate("/");
+        // ✅ التوجيه حسب الـ role
+        if (admin.role === "viewer") {
+          navigate("/operation-reports");
+        } else {
+          navigate("/");
+        }
       }
     } catch (err) {
       console.error("Login error:", err);
-      // مفيش داعي تعمل toast هنا لأننا ضفناه بالفعل في usePost
     }
   }
 
@@ -83,12 +79,11 @@ export default function LoginPage() {
     >
       <Card className="w-full max-w-lg rounded-lg shadow-lg animate-fade-in-up">
         <CardHeader className="flex flex-col items-center gap-2 text-center">
-          <img src={logo} alt="SalePro Logo" width={100} height={40} className="mb-2" />
+          <img src={logo} alt="Logo" width={100} height={40} className="mb-2" />
         </CardHeader>
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              {/* Email */}
               <FormField
                 control={form.control}
                 name="email"
@@ -96,14 +91,17 @@ export default function LoginPage() {
                   <FormItem>
                     <FormLabel className="text-secondary">Email</FormLabel>
                     <FormControl>
-                      <Input type="email" placeholder="admin@example.com" {...field} />
+                      <Input
+                        type="email"
+                        placeholder="admin@example.com"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
-              {/* Password */}
               <FormField
                 control={form.control}
                 name="password"
@@ -111,14 +109,17 @@ export default function LoginPage() {
                   <FormItem>
                     <FormLabel className="text-secondary">Password</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="••••••••" {...field} />
+                      <Input
+                        type="password"
+                        placeholder="••••••••"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
-              {/* Submit */}
               <Button
                 type="submit"
                 className="w-full bg-secondary hover:bg-purple-700 cursor-pointer"
