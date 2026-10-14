@@ -23,6 +23,8 @@ import ThemeCategoriesPage from "./Pages/ThemeCategories/ThemeCategories";
 import ThemeCategoriesAdd from "./Pages/ThemeCategories/ThemeCategoriesAdd";
 import ThemeCategoriesEdit from "./Pages/ThemeCategories/ThemeCategoriesEdit";
 import TemplatePage from "./Pages/Templates/Template";
+import OperationReports from "./Pages/OperationReports/OperationReports";
+import OperationReportView from "./Pages/OperationReports/OperationReportView";
 
 export default function AppRoutes() {
   return (
@@ -210,6 +212,24 @@ export default function AppRoutes() {
           element={
             <ProtectedRoute>
               <TemplatePage />
+            </ProtectedRoute>
+          }
+        />
+      </Route>
+      <Route path="operation-reports">
+        <Route
+          index
+          element={
+            <ProtectedRoute>
+              <OperationReports />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="view/:id"
+          element={
+            <ProtectedRoute>
+              <OperationReportView />
             </ProtectedRoute>
           }
         />

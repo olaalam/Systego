@@ -7,7 +7,6 @@ import { toast } from "react-toastify";
 const ClientAdd = () => {
   const navigate = useNavigate();
   const [packages, setPackages] = useState([]);
-  // ✅ 1. تعريف حالة التحميل
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -46,13 +45,45 @@ const ClientAdd = () => {
       ],
       required: true,
     },
+    // ✅ الحقول الجديدة
+    { key: "main_location", label: "Main Location" },
+    {
+      key: "branches_locations",
+      label: "Branches Locations",
+      type: "array",
+      placeholder: "Enter branch address",
+      addButtonText: "Add Branch",
+    },
+    {
+      key: "payment_cycle",
+      label: "Payment Cycle",
+      type: "select",
+      options: [
+        { value: "monthly", label: "Monthly" },
+        { value: "quarterly", label: "Quarterly" },
+        { value: "half_yearly", label: "Half Yearly" },
+        { value: "yearly", label: "Yearly" },
+      ],
+    },
+    { key: "payment_amount", label: "Payment Amount", type: "number" },
+    { key: "contact_person_name", label: "Contact Person Name" },
+    { key: "contact_person_phone", label: "Contact Person Phone" },
+    { key: "sales_man_name", label: "Sales Man Name" },
+    { key: "sales_man_phone", label: "Sales Man Phone" },
   ];
 
   const handleSubmit = async (data) => {
-    // ✅ 2. تفعيل حالة التحميل عند الضغط
     setIsSubmitting(true);
     try {
-      const res = await api.post("/api/admin/clients/", data);
+      // ✅ الفروع Array جاهزة
+      const payload = {
+        ...data,
+        branches_locations: (data.branches_locations || []).filter(
+          (b) => b && b.trim() !== "",
+        ),
+      };
+
+      const res = await api.post("/api/admin/clients/", payload);
       const newClient = res.data;
 
       if (newClient && newClient._id) {
@@ -74,7 +105,6 @@ const ClientAdd = () => {
         toast.error(message);
       }
     } finally {
-      // ✅ 3. إلغاء حالة التحميل سواء نجح الطلب أو فشل ليرجع الزرار متاحاً
       setIsSubmitting(false);
     }
   };
@@ -86,8 +116,7 @@ const ClientAdd = () => {
         fields={fields}
         onSubmit={handleSubmit}
         onCancel={() => navigate("/client")}
-        initialData={{ status: "active" }}
-        // ✅ 4. تمرير حالة التحميل للمكون
+        initialData={{ status: "active", payment_cycle: "monthly" }}
         loading={isSubmitting}
       />
     </div>

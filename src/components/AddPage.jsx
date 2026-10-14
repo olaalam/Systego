@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import { UserPlus } from "lucide-react";
+import { UserPlus, Plus, Trash2 } from "lucide-react";
 
 const AddPage = ({
   title = "Add Item",
@@ -17,18 +17,22 @@ const AddPage = ({
   useEffect(() => {
     if (initialData && Object.keys(initialData).length > 0) {
       const filteredData = fields.reduce((acc, field) => {
-        acc[field.key] =
-          initialData[field.key] !== undefined
-            ? initialData[field.key]
-            : field.type === "checkbox"
-            ? false
-            : "";
+        const incoming = initialData[field.key];
+        if (field.type === "array") {
+          acc[field.key] = Array.isArray(incoming) ? incoming : [];
+        } else if (field.type === "checkbox") {
+          acc[field.key] = incoming !== undefined ? incoming : false;
+        } else {
+          acc[field.key] = incoming !== undefined ? incoming : "";
+        }
         return acc;
       }, {});
       setFormData(filteredData);
     } else {
       const defaults = fields.reduce((acc, field) => {
-        acc[field.key] = field.type === "checkbox" ? false : "";
+        if (field.type === "array") acc[field.key] = [];
+        else if (field.type === "checkbox") acc[field.key] = false;
+        else acc[field.key] = "";
         return acc;
       }, {});
       setFormData(defaults);
@@ -43,14 +47,18 @@ const AddPage = ({
   const handleImageChange = async (key, file) => {
     if (!file) return;
 
-    // Validate file type
-    const validTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"];
+    const validTypes = [
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+    ];
     if (!validTypes.includes(file.type)) {
       toast.error("Please upload a valid image (JPG, PNG, GIF, or WebP)");
       return;
     }
 
-    // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
       toast.error("Image size should be less than 5MB");
       return;
@@ -67,20 +75,48 @@ const AddPage = ({
     }
   };
 
+  // ✅ Array field handlers
+  const handleArrayItemChange = (key, index, value) => {
+    setFormData((prev) => {
+      const arr = [...(prev[key] || [])];
+      arr[index] = value;
+      return { ...prev, [key]: arr };
+    });
+  };
+
+  const handleArrayAdd = (key) => {
+    setFormData((prev) => ({
+      ...prev,
+      [key]: [...(prev[key] || []), ""],
+    }));
+  };
+
+  const handleArrayRemove = (key, index) => {
+    setFormData((prev) => ({
+      ...prev,
+      [key]: (prev[key] || []).filter((_, i) => i !== index),
+    }));
+  };
+
   const handleSubmit = () => {
-    // ✅ Basic required validation
     for (let field of fields) {
-      if (field.required && !formData[field.key]) {
-        toast.error(`Please fill in ${field.label}`);
-        return;
+      if (field.required) {
+        const val = formData[field.key];
+        const isEmpty =
+          val === undefined ||
+          val === null ||
+          val === "" ||
+          (Array.isArray(val) && val.length === 0);
+        if (isEmpty) {
+          toast.error(`Please fill in ${field.label}`);
+          return;
+        }
       }
     }
 
-    // ✅ Special case: date validation
     if (formData.from && formData.to) {
       const fromDate = new Date(formData.from);
       const toDate = new Date(formData.to);
-
       if (fromDate > toDate) {
         toast.error("Valid From date cannot be later than Valid To date");
         return;
@@ -140,7 +176,9 @@ const AddPage = ({
                   <input
                     type="file"
                     accept="image/*"
-                    onChange={(e) => handleImageChange(field.key, e.target.files[0])}
+                    onChange={(e) =>
+                      handleImageChange(field.key, e.target.files[0])
+                    }
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100"
                   />
                   {formData[field.key] && (
@@ -153,12 +191,50 @@ const AddPage = ({
                     </div>
                   )}
                 </div>
+              ) : field.type === "array" ? (
+                /* ✅ Dynamic Array Field */
+                <div className="space-y-2">
+                  {(formData[field.key] || []).map((item, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={item}
+                        onChange={(e) =>
+                          handleArrayItemChange(
+                            field.key,
+                            index,
+                            e.target.value,
+                          )
+                        }
+                        placeholder={field.placeholder || "Enter value"}
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleArrayRemove(field.key, index)}
+                        className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition"
+                        title="Remove"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  ))}
+
+                  <button
+                    type="button"
+                    onClick={() => handleArrayAdd(field.key)}
+                    className="flex items-center gap-1 text-sm text-purple-600 hover:text-purple-800 font-medium"
+                  >
+                    <Plus size={14} />
+                    {field.addButtonText || "Add Item"}
+                  </button>
+                </div>
               ) : (
                 <input
                   type={field.type || "text"}
                   value={formData[field.key] ?? ""}
                   onChange={(e) => handleChange(field.key, e.target.value)}
-                  placeholder={`Enter ${field.label}`}
+                  placeholder={field.placeholder || `Enter ${field.label}`}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                 />
               )}
