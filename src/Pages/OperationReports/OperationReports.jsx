@@ -102,6 +102,24 @@ const OperationReports = () => {
       ),
     },
     {
+      key: "package_id",
+      header: "Package",
+      render: (v, row) => {
+        const pkg = row.package_id;
+        if (!pkg) return <span className="text-gray-400 text-xs">-</span>;
+        return (
+          <div className="text-sm">
+            <span className="font-medium text-gray-800">{pkg.name}</span>
+            {pkg.price && (
+              <span className="block text-xs text-gray-500">
+                {Number(pkg.price).toLocaleString()} EGP
+              </span>
+            )}
+          </div>
+        );
+      },
+    },
+    {
       key: "status",
       header: "Status",
       render: (v, row) => (

@@ -13,6 +13,7 @@ import {
   User,
   CreditCard,
   Calendar,
+  Package,
   CheckCircle,
 } from "lucide-react";
 
@@ -273,6 +274,19 @@ const OperationReportModal = ({
 
               {/* Details Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <DetailCard
+                  icon={<Package size={16} className="text-violet-500" />}
+                  label="Package"
+                  value={
+                    report.package_id
+                      ? `${report.package_id.name}${
+                          report.package_id.price
+                            ? ` — ${Number(report.package_id.price).toLocaleString()} EGP`
+                            : ""
+                        }`
+                      : "-"
+                  }
+                />
                 <DetailCard
                   icon={<Mail size={16} className="text-blue-500" />}
                   label="Email"
