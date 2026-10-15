@@ -20,28 +20,33 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useState } from "react";
 import logo from "@/assets/logo.jpg";
 
-const menuItems = [
-  { name: "Dashboard", icon: LayoutDashboard, path: "/" },
-  // { name: "Frontend", icon: Monitor, path: "/frontend" },
+const allMenuItems = [
+  { name: "Dashboard", icon: LayoutDashboard, path: "/", viewerHidden: true },
   {
     name: "Client",
     icon: Users,
     path: "/client",
+    viewerHidden: true,
   },
-  { name: "PaymentMethod", icon: CreditCard, path: "/payment-method" },
-  { name: "Coupon List", icon: Ticket, path: "/coupons" },
-  { name: "Theme", icon: Database, path: "/theme" },
-  { name: "Theme Categories", icon: FolderOpen, path: "/theme-categories" },
-  // { name: "Template", icon: Puzzle, path: "/template" },
+  { name: "PaymentMethod", icon: CreditCard, path: "/payment-method", viewerHidden: true },
+  { name: "Coupon List", icon: Ticket, path: "/coupons", viewerHidden: true },
+  { name: "Theme", icon: Database, path: "/theme", viewerHidden: true },
+  { name: "Theme Categories", icon: FolderOpen, path: "/theme-categories", viewerHidden: true },
   {
     name: "Package",
     icon: Package,
     path: "/packages",
+    viewerHidden: true,
   },
   { name: "Operation Reports", icon: BarChart3, path: "/operation-reports" },
 ];
 
 export default function Sidebar() {
+  const admin = JSON.parse(localStorage.getItem("admin") || "{}");
+  const isViewer = admin.role === "viewer";
+  const menuItems = isViewer
+    ? allMenuItems.filter((item) => !item.viewerHidden)
+    : allMenuItems;
   const [mobileOpen, setMobileOpen] = useState(false);
   const [desktopCollapsed, setDesktopCollapsed] = useState(false);
 
@@ -83,27 +88,20 @@ export default function Sidebar() {
           desktopCollapsed ? "w-16" : "w-64"
         }`}
       >
-        {/* Header with toggle functionality */}
+        {/* Header with persistent toggle button */}
         <div
-          className={`flex items-center p-6 border-b ${desktopCollapsed ? "justify-center" : "justify-start"}`}
+          className={`flex items-center border-b px-3 py-4 gap-2 ${desktopCollapsed ? "justify-center" : "justify-between"}`}
         >
-          {desktopCollapsed ? (
-            // Show only Menu button when collapsed
-            <button
-              onClick={() => setDesktopCollapsed(!desktopCollapsed)}
-              className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
-            >
-              <Menu className="w-5 h-5" />
-            </button>
-          ) : (
-            // Show only Logo when expanded
-            <img
-              src={logo}
-              alt="logo"
-              className="h-8 cursor-pointer hover:opacity-80 transition-opacity"
-              onClick={() => setDesktopCollapsed(!desktopCollapsed)}
-            />
+          {!desktopCollapsed && (
+            <img src={logo} alt="logo" className="h-8" />
           )}
+          <button
+            onClick={() => setDesktopCollapsed(!desktopCollapsed)}
+            className="p-2 rounded-lg hover:bg-gray-100 transition-colors flex-shrink-0"
+            title={desktopCollapsed ? "توسيع القائمة" : "تصغير القائمة"}
+          >
+            <Menu className="w-5 h-5" />
+          </button>
         </div>
 
         {/* Menu items */}
