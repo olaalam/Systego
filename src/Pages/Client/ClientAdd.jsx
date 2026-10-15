@@ -45,6 +45,17 @@ const ClientAdd = () => {
       ],
       required: true,
     },
+    {
+      key: "operation_status",
+      label: "Operation Status",
+      type: "select",
+      options: [
+        { value: "Demo", label: "Demo" },
+        { value: "Sales", label: "Sales" },
+        { value: "Data", label: "Data" },
+        { value: "Delivered", label: "Delivered" },
+      ],
+    },
     // ✅ الحقول الجديدة
     { key: "main_location", label: "Main Location" },
     {
@@ -116,7 +127,7 @@ const ClientAdd = () => {
         fields={fields}
         onSubmit={handleSubmit}
         onCancel={() => navigate("/client")}
-        initialData={{ status: "active", payment_cycle: "monthly" }}
+        initialData={{ status: "active", operation_status: "Demo", payment_cycle: "monthly" }}
         loading={isSubmitting}
       />
     </div>

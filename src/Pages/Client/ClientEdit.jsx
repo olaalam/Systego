@@ -40,6 +40,7 @@ const ClientEdit = () => {
           package_id: client?.package_id?._id || "",
           logoBase64: client.logoBase64 || "",
           status: client.status || "active",
+          operation_status: client.operation_status || "Demo",
           main_location: client.main_location || "",
           branches_locations: Array.isArray(client.branches_locations)
             ? client.branches_locations
@@ -88,6 +89,17 @@ const ClientEdit = () => {
         { value: "inactive", label: "Inactive" },
       ],
       required: true,
+    },
+    {
+      key: "operation_status",
+      label: "Operation Status",
+      type: "select",
+      options: [
+        { value: "Demo", label: "Demo" },
+        { value: "Sales", label: "Sales" },
+        { value: "Data", label: "Data" },
+        { value: "Delivered", label: "Delivered" },
+      ],
     },
     { key: "main_location", label: "Main Location" },
     {

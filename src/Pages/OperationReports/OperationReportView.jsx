@@ -92,6 +92,7 @@ const OperationReportView = () => {
         {/* Details Grid */}
         <div className="grid grid-cols-2 gap-4 mb-8">
           <Field label="Status" value={report.status} />
+          <Field label="Operation Status" value={report.operation_status || "Demo"} />
           <Field label="Email" value={report.email} />
           <Field label="Main Location" value={report.main_location} />
           <Field

@@ -6,15 +6,20 @@ import useGet from "@/hooks/useGet";
 import api from "@/api/api";
 import { toast } from "react-toastify";
 // استيراد الأيقونات المطلوبة
-import { RefreshCw, Server, Cpu, ShieldCheck, Play, ExternalLink } from "lucide-react";
+import {
+  RefreshCw,
+  Server,
+  Cpu,
+  ShieldCheck,
+  Play,
+  ExternalLink,
+} from "lucide-react";
 import DeleteDialog from "@/components/DeleteForm";
 import useDelete from "@/hooks/useDelete";
 
 const Clients = () => {
   const { data, loading, error, refetch } = useGet("/api/admin/clients");
-  const { deleteData, loading: deleting } = useDelete(
-    "/api/admin/clients/"
-  );
+  const { deleteData, loading: deleting } = useDelete("/api/admin/clients/");
   // ✅ أوبجكت لتخزين الخطوة الحالية لكل عميل (0: لم يبدأ، 1: rebuild، وهكذا)
   const [clientSteps, setClientSteps] = useState({});
 
@@ -26,11 +31,12 @@ const Clients = () => {
   const handleDeployment = async (client) => {
     const clientId = client._id;
 
-    const sessionClientName = sessionStorage.getItem("client_name") || client.company_name;
+    const sessionClientName =
+      sessionStorage.getItem("client_name") || client.company_name;
     const sessionClientId = sessionStorage.getItem("client_id") || clientId;
 
     // تحديث الحالة للبدء (الخطوة 1)
-    setClientSteps(prev => ({ ...prev, [clientId]: 1 }));
+    setClientSteps((prev) => ({ ...prev, [clientId]: 1 }));
     const toastId = toast.loading("Step 1: Rebuilding Frontend...");
 
     try {
@@ -38,35 +44,49 @@ const Clients = () => {
       await api.post(`/api/admin/clients/${sessionClientId}/rebuild-frontend`);
 
       // الانتقال للخطوة 2
-      setClientSteps(prev => ({ ...prev, [clientId]: 2 }));
+      setClientSteps((prev) => ({ ...prev, [clientId]: 2 }));
       toast.update(toastId, { render: "Step 2: Deploying Backend..." });
       await api.post(`/api/admin/clients/${sessionClientId}/deploy-backend`);
 
-
       // انتظار 10 ثانية
-      toast.update(toastId, { render: "Waiting 10 seconds for system sync..." });
+      toast.update(toastId, {
+        render: "Waiting 10 seconds for system sync...",
+      });
       await delay(10000);
       // الانتقال للخطوة 3
-      setClientSteps(prev => ({ ...prev, [clientId]: 3 }));
+      setClientSteps((prev) => ({ ...prev, [clientId]: 3 }));
       toast.update(toastId, { render: "Step 3: Installing Dependencies..." });
-      await api.post(`/api/admin/clients/${clientId}/install-dependencies`, {
-      });
+      await api.post(`/api/admin/clients/${clientId}/install-dependencies`, {});
 
       // انتظار 40 ثانية
-      toast.update(toastId, { render: "Waiting 40 seconds for system sync..." });
+      toast.update(toastId, {
+        render: "Waiting 40 seconds for system sync...",
+      });
       await delay(40000);
 
       // الانتقال للخطوة 4 (الأخيرة)
-      setClientSteps(prev => ({ ...prev, [clientId]: 4 }));
-      toast.update(toastId, { render: "Step 4: Installing SSL Certificate..." });
-      const res = await api.post(`/api/admin/clients/${sessionClientId}/install-ssl`);
+      setClientSteps((prev) => ({ ...prev, [clientId]: 4 }));
+      toast.update(toastId, {
+        render: "Step 4: Installing SSL Certificate...",
+      });
+      const res = await api.post(
+        `/api/admin/clients/${sessionClientId}/install-ssl`,
+      );
 
-      toast.update(toastId, { render: "Deployment finished!", type: "success", isLoading: false, autoClose: 3000 });
-
-
+      toast.update(toastId, {
+        render: "Deployment finished!",
+        type: "success",
+        isLoading: false,
+        autoClose: 3000,
+      });
     } catch (err) {
-      setClientSteps(prev => ({ ...prev, [clientId]: 0 })); // إعادة التعيين في حال الخطأ
-      toast.update(toastId, { render: "Process failed!", type: "error", isLoading: false, autoClose: 3000 });
+      setClientSteps((prev) => ({ ...prev, [clientId]: 0 })); // إعادة التعيين في حال الخطأ
+      toast.update(toastId, {
+        render: "Process failed!",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
     }
   };
 
@@ -91,7 +111,8 @@ const Clients = () => {
 
         // helper function لتحديد لون الأيقونة بناءً على الخطوة
         const getIconClass = (stepNumber) => {
-          if (currentStep === stepNumber) return "text-purple-600 animate-pulse"; // جاري التنفيذ
+          if (currentStep === stepNumber)
+            return "text-purple-600 animate-pulse"; // جاري التنفيذ
           if (currentStep > stepNumber) return "text-purple-600"; // اكتملت
           return "text-gray-300"; // لم تبدأ بعد
         };
@@ -100,8 +121,14 @@ const Clients = () => {
           <div className="flex items-center gap-4">
             {/* زر البدء - يظهر إذا لم تكن هناك عملية جارية */}
             {currentStep === 0 ? (
-              <button onClick={() => handleDeployment(row)} title="Start Deployment Process">
-                <Play size={18} className="text-green-600 hover:scale-125 transition-transform" />
+              <button
+                onClick={() => handleDeployment(row)}
+                title="Start Deployment Process"
+              >
+                <Play
+                  size={18}
+                  className="text-green-600 hover:scale-125 transition-transform"
+                />
               </button>
             ) : null}
 
@@ -131,10 +158,53 @@ const Clients = () => {
       },
     },
     {
+      key: "subscription",
+      header: "Subscription",
+      render: (v, row) => {
+        const sub = row.subscription;
+        if (!sub || sub.daysLeft === null) return "-";
+
+        return sub.expired ? (
+          <span className="px-2 py-1 rounded-full text-xs bg-red-100 text-red-800">
+            Expired
+          </span>
+        ) : (
+          <span className="px-2 py-1 rounded-full text-xs bg-green-100 text-green-800">
+            {sub.daysLeft} days left
+          </span>
+        );
+      },
+    },
+    {
+      key: "operation_status",
+      header: "Operation Status",
+      render: (v) => {
+        const val = v || "Demo";
+        const colorStyles = {
+          Demo: "bg-blue-100 text-blue-800",
+          Sales: "bg-amber-100 text-amber-800",
+          Data: "bg-purple-100 text-purple-800",
+          Delivered: "bg-emerald-100 text-emerald-800",
+          Delvierd: "bg-emerald-100 text-emerald-800",
+        };
+        return (
+          <span
+            className={`px-2 py-1 rounded-full text-xs font-medium ${
+              colorStyles[val] || colorStyles.Demo
+            }`}
+          >
+            {val}
+          </span>
+        );
+      },
+    },
+    {
       key: "status",
       header: "Status",
       render: (v) => (
-        <span className={`px-2 py-1 rounded-full text-xs ${v === "active" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
+        <span
+          className={`px-2 py-1 rounded-full text-xs ${v === "active" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}
+        >
           {v === "active" ? "Active" : "Inactive"}
         </span>
       ),
@@ -162,14 +232,14 @@ const Clients = () => {
       {deleteTarget && (
         <DeleteDialog
           title="Delete Client"
-          message={`Are you sure you want to delete client "${deleteTarget.company_name || deleteTarget._id
-            }"?`}
+          message={`Are you sure you want to delete client "${
+            deleteTarget.company_name || deleteTarget._id
+          }"?`}
           onConfirm={() => handleDelete(deleteTarget)}
           onCancel={() => setDeleteTarget(null)}
           loading={deleting}
         />
       )}
-
     </div>
   );
 };
