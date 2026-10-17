@@ -1,4 +1,4 @@
-// src/router/index.jsx
+﻿// src/router/index.jsx
 import { Routes, Route } from "react-router-dom";
 import Dashboard from "@/Pages/Dashboard";
 import Client from "@/Pages/Client/Client";
@@ -26,14 +26,15 @@ import TemplatePage from "./Pages/Templates/Template";
 import OperationReports from "./Pages/OperationReports/OperationReports";
 import OperationReportView from "./Pages/OperationReports/OperationReportView";
 import CreateAdmin from "./Pages/Admins/CreateAdmin";
+import Payments from "./Pages/Payments/Payments";
 
 export default function AppRoutes() {
   return (
     <Routes>
-      {/* ✅ Auth (مفتوح) */}
+      {/* âœ… Auth (Ù…ÙØªÙˆØ­) */}
       <Route path="/login" element={<LoginPage />} />
 
-      {/* ✅ Dashboard (super_admin بس) */}
+      {/* âœ… Dashboard (super_admin Ø¨Ø³) */}
       <Route
         path="/"
         element={
@@ -43,7 +44,7 @@ export default function AppRoutes() {
         }
       />
 
-      {/* ✅ Create Admin (super_admin بس) */}
+      {/* âœ… Create Admin (super_admin Ø¨Ø³) */}
       <Route
         path="create-admin"
         element={
@@ -53,7 +54,7 @@ export default function AppRoutes() {
         }
       />
 
-      {/* ✅ Theme (super_admin بس) */}
+      {/* âœ… Theme (super_admin Ø¨Ø³) */}
       <Route path="theme">
         <Route
           index
@@ -81,7 +82,7 @@ export default function AppRoutes() {
         />
       </Route>
 
-      {/* ✅ Client (super_admin بس) */}
+      {/* âœ… Client (super_admin Ø¨Ø³) */}
       <Route path="client">
         <Route
           index
@@ -109,7 +110,7 @@ export default function AppRoutes() {
         />
       </Route>
 
-      {/* ✅ Coupons (super_admin بس) */}
+      {/* âœ… Coupons (super_admin Ø¨Ø³) */}
       <Route path="coupons">
         <Route
           index
@@ -137,7 +138,7 @@ export default function AppRoutes() {
         />
       </Route>
 
-      {/* ✅ Package (super_admin بس) */}
+      {/* âœ… Package (super_admin Ø¨Ø³) */}
       <Route path="packages">
         <Route
           index
@@ -165,7 +166,7 @@ export default function AppRoutes() {
         />
       </Route>
 
-      {/* ✅ PaymentMethod (super_admin بس) */}
+      {/* âœ… PaymentMethod (super_admin Ø¨Ø³) */}
       <Route path="payment-method">
         <Route
           index
@@ -193,7 +194,7 @@ export default function AppRoutes() {
         />
       </Route>
 
-      {/* ✅ Theme Categories (super_admin بس) */}
+      {/* âœ… Theme Categories (super_admin Ø¨Ø³) */}
       <Route path="theme-categories">
         <Route
           index
@@ -221,7 +222,7 @@ export default function AppRoutes() {
         />
       </Route>
 
-      {/* ✅ Template (super_admin بس) */}
+      {/* âœ… Template (super_admin Ø¨Ø³) */}
       <Route path="template">
         <Route
           index
@@ -233,7 +234,7 @@ export default function AppRoutes() {
         />
       </Route>
 
-      {/* ✅ Operation Reports (الكل يدخلها — super_admin + viewer) */}
+      {/* âœ… Operation Reports (Ø§Ù„ÙƒÙ„ ÙŠØ¯Ø®Ù„Ù‡Ø§ â€” super_admin + viewer) */}
       <Route path="operation-reports">
         <Route
           index
@@ -253,7 +254,16 @@ export default function AppRoutes() {
         />
       </Route>
 
-      {/* ❌ 404 - Not Found Route */}
+      {/* âŒ 404 - Not Found Route */}
+      {/* Payments (super_admin) */}
+      <Route
+        path="payments"
+        element={
+          <ProtectedRoute requiredRole="super_admin">
+            <Payments />
+          </ProtectedRoute>
+        }
+      />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );

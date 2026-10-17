@@ -77,6 +77,11 @@ const ClientAdd = () => {
       ],
     },
     { key: "payment_amount", label: "Payment Amount", type: "number" },
+    {
+      key: "subscription_end_date",
+      label: "Active until (optional — defaults to one payment cycle)",
+      type: "date",
+    },
     { key: "contact_person_name", label: "Contact Person Name" },
     { key: "contact_person_phone", label: "Contact Person Phone" },
     { key: "sales_man_name", label: "Sales Man Name" },
@@ -93,6 +98,10 @@ const ClientAdd = () => {
           (b) => b && b.trim() !== "",
         ),
       };
+
+      if (!payload.subscription_end_date) {
+        delete payload.subscription_end_date;
+      }
 
       const res = await api.post("/api/admin/clients/", payload);
       const newClient = res.data;

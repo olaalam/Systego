@@ -16,8 +16,11 @@ import {
 } from "lucide-react";
 import DeleteDialog from "@/components/DeleteForm";
 import useDelete from "@/hooks/useDelete";
+import SubscriptionActions from "@/components/SubscriptionActions";
 
 const Clients = () => {
+  const admin = JSON.parse(localStorage.getItem("admin") || "{}");
+  const isViewer = admin.role === "viewer";
   const { data, loading, error, refetch } = useGet("/api/admin/clients");
   const { deleteData, loading: deleting } = useDelete("/api/admin/clients/");
   // ✅ أوبجكت لتخزين الخطوة الحالية لكل عميل (0: لم يبدأ، 1: rebuild، وهكذا)
@@ -162,16 +165,45 @@ const Clients = () => {
       header: "Subscription",
       render: (v, row) => {
         const sub = row.subscription;
-        if (!sub || sub.daysLeft === null) return "-";
+        if (!sub || sub.daysLeft === null) {
+          if (isViewer) {
+            return <span className="text-xs text-gray-400">No subscription</span>;
+          }
+          return (
+            <SubscriptionActions
+              clientId={row._id}
+              client={row}
+              onUpdated={() => refetch()}
+              compact
+            />
+          );
+        }
 
-        return sub.expired ? (
-          <span className="px-2 py-1 rounded-full text-xs bg-red-100 text-red-800">
-            Expired
-          </span>
-        ) : (
-          <span className="px-2 py-1 rounded-full text-xs bg-green-100 text-green-800">
-            {sub.daysLeft} days left
-          </span>
+        return (
+          <div className="space-y-1">
+            {sub.expired ? (
+              <span className="px-2 py-1 rounded-full text-xs bg-red-100 text-red-800">
+                Expired
+              </span>
+            ) : (
+              <span className="px-2 py-1 rounded-full text-xs bg-green-100 text-green-800">
+                {sub.daysLeft} days left
+              </span>
+            )}
+            {sub.endDate && (
+              <div className="text-[11px] text-gray-500">
+                Until {new Date(sub.endDate).toLocaleDateString()}
+              </div>
+            )}
+            {!isViewer && (
+              <SubscriptionActions
+                clientId={row._id}
+                client={row}
+                onUpdated={() => refetch()}
+                compact
+              />
+            )}
+          </div>
         );
       },
     },

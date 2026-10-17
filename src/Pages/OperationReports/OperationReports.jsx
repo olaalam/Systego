@@ -284,7 +284,7 @@ const OperationReports = () => {
             )}
             {sub.endDate && (
               <div className="text-xs text-gray-500 mt-1">
-                Ends: {new Date(sub.endDate).toLocaleDateString()}
+                Until: {new Date(sub.endDate).toLocaleDateString()}
               </div>
             )}
           </div>

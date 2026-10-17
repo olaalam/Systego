@@ -12,10 +12,9 @@ import {
   Phone,
   User,
   CreditCard,
-  Calendar,
   Package,
-  CheckCircle,
 } from "lucide-react";
+import SubscriptionActions from "@/components/SubscriptionActions";
 
 const OPERATION_STATUS_OPTIONS = ["Demo", "Sales", "Data", "Delivered"];
 
@@ -26,6 +25,8 @@ const OperationReportModal = ({
 }) => {
   const [report, setReport] = useState(null);
   const [fetching, setFetching] = useState(true);
+  const admin = JSON.parse(localStorage.getItem("admin") || "{}");
+  const isViewer = admin.role === "viewer";
   const [newNote, setNewNote] = useState("");
   const [addingNote, setAddingNote] = useState(false);
   const [updatingField, setUpdatingField] = useState(false);
@@ -319,6 +320,40 @@ const OperationReportModal = ({
                       : "-"
                   }
                 />
+                <div className="p-3.5 bg-gray-50/70 border border-gray-200/60 rounded-xl md:col-span-2">
+                  <div className="flex items-center justify-between gap-3 mb-2">
+                    <span className="text-xs text-gray-500">Subscription</span>
+                    {!isViewer && (
+                      <SubscriptionActions
+                        clientId={reportId}
+                        client={report}
+                        onUpdated={(updated) => {
+                          setReport((prev) => ({ ...prev, ...updated }));
+                          if (onReportUpdated) {
+                            onReportUpdated(reportId, updated);
+                          }
+                        }}
+                      />
+                    )}
+                  </div>
+                  <p className="text-sm font-semibold text-gray-800">
+                    {report.subscription?.expired
+                      ? "Expired"
+                      : report.subscription?.daysLeft != null
+                        ? `${report.subscription.daysLeft} days left`
+                        : report.status === "active"
+                          ? "Active"
+                          : "Inactive"}
+                  </p>
+                  {(report.subscription_end_date || report.subscription?.endDate) && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      Until{" "}
+                      {new Date(
+                        report.subscription_end_date || report.subscription.endDate,
+                      ).toLocaleDateString()}
+                    </p>
+                  )}
+                </div>
                 <DetailCard
                   icon={<User size={16} className="text-purple-500" />}
                   label="Contact Person"

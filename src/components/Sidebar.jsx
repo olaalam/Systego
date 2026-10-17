@@ -38,6 +38,12 @@ const allMenuItems = [
     path: "/packages",
     viewerHidden: true,
   },
+  {
+    name: "Payments",
+    icon: CreditCard,
+    path: "/payments",
+    viewerHidden: true,
+  },
   { name: "Operation Reports", icon: BarChart3, path: "/operation-reports" },
 ];
 

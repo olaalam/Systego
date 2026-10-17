@@ -47,6 +47,11 @@ const ClientEdit = () => {
             : [],
           payment_cycle: client.payment_cycle || "monthly",
           payment_amount: client.payment_amount || "",
+          subscription_end_date: client.subscription_end_date
+            ? new Date(client.subscription_end_date).toISOString().slice(0, 10)
+            : client.subscription?.endDate
+              ? new Date(client.subscription.endDate).toISOString().slice(0, 10)
+              : "",
           contact_person_name: client.contact_person_name || "",
           contact_person_phone: client.contact_person_phone || "",
           sales_man_name: client.sales_man_name || "",
@@ -121,6 +126,11 @@ const ClientEdit = () => {
       ],
     },
     { key: "payment_amount", label: "Payment Amount", type: "number" },
+    {
+      key: "subscription_end_date",
+      label: "Active until",
+      type: "date",
+    },
     { key: "contact_person_name", label: "Contact Person Name" },
     { key: "contact_person_phone", label: "Contact Person Phone" },
     { key: "sales_man_name", label: "Sales Man Name" },
@@ -141,6 +151,10 @@ const ClientEdit = () => {
       // ✅ لو الباسورد فاضي، مش هنبعته أصلاً
       if (!payload.password || payload.password.trim() === "") {
         delete payload.password;
+      }
+
+      if (!payload.subscription_end_date) {
+        delete payload.subscription_end_date;
       }
 
       await api.put(`/api/admin/clients/${id}`, payload);
