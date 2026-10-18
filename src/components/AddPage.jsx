@@ -18,7 +18,7 @@ const AddPage = ({
     if (initialData && Object.keys(initialData).length > 0) {
       const filteredData = fields.reduce((acc, field) => {
         const incoming = initialData[field.key];
-        if (field.type === "array") {
+        if (field.type === "array" || field.type === "custom") {
           acc[field.key] = Array.isArray(incoming) ? incoming : [];
         } else if (field.type === "checkbox") {
           acc[field.key] = incoming !== undefined ? incoming : false;
@@ -30,7 +30,7 @@ const AddPage = ({
       setFormData(filteredData);
     } else {
       const defaults = fields.reduce((acc, field) => {
-        if (field.type === "array") acc[field.key] = [];
+        if (field.type === "array" || field.type === "custom") acc[field.key] = [];
         else if (field.type === "checkbox") acc[field.key] = false;
         else acc[field.key] = "";
         return acc;
@@ -191,6 +191,8 @@ const AddPage = ({
                     </div>
                   )}
                 </div>
+              ) : field.type === "custom" ? (
+                <div>{field.render && field.render(formData, setFormData)}</div>
               ) : field.type === "array" ? (
                 /* ✅ Dynamic Array Field */
                 <div className="space-y-2">

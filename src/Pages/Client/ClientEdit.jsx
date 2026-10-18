@@ -14,6 +14,83 @@ const ClientEdit = () => {
   const [apiKey, setApiKey] = useState("");
   const [regenerating, setRegenerating] = useState(false);
 
+  // Branch editor: name + which branches are online (owner decides how many).
+  const renderBranches = (formData, setFormData) => {
+    const list = Array.isArray(formData.branches_config)
+      ? formData.branches_config
+      : [];
+
+    const updateItem = (index, patch) =>
+      setFormData((prev) => ({
+        ...prev,
+        branches_config: (prev.branches_config || []).map((it, i) =>
+          i === index ? { ...it, ...patch } : it,
+        ),
+      }));
+
+    const addItem = () =>
+      setFormData((prev) => ({
+        ...prev,
+        branches_config: [
+          ...(prev.branches_config || []),
+          { name: "", Is_Online: false },
+        ],
+      }));
+
+    const removeItem = (index) =>
+      setFormData((prev) => ({
+        ...prev,
+        branches_config: (prev.branches_config || []).filter(
+          (_, i) => i !== index,
+        ),
+      }));
+
+    return (
+      <div className="space-y-2">
+        {list.map((item, index) => (
+          <div key={index} className="flex items-center gap-3">
+            <input
+              type="text"
+              value={item.name || ""}
+              onChange={(e) => updateItem(index, { name: e.target.value })}
+              placeholder="Enter branch name"
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+            />
+            <label className="flex items-center gap-1.5 text-sm text-gray-700 whitespace-nowrap">
+              <input
+                type="checkbox"
+                checked={!!item.Is_Online}
+                onChange={(e) =>
+                  updateItem(index, { Is_Online: e.target.checked })
+                }
+                className="h-4 w-4"
+              />
+              Online
+            </label>
+            <button
+              type="button"
+              onClick={() => removeItem(index)}
+              className="p-2 text-red-500 hover:bg-red-50 rounded-lg"
+              title="Remove"
+            >
+              ✕
+            </button>
+          </div>
+        ))}
+        <button
+          type="button"
+          onClick={addItem}
+          className="flex items-center gap-1 text-sm text-purple-600 hover:text-purple-800 font-medium"
+        >
+          + Add Branch
+        </button>
+        <p className="text-xs text-gray-500">
+          Note: You can add multiple branches for this client.
+        </p>
+      </div>
+    );
+  };
+
   // ✅ جلب الباكدجات
   useEffect(() => {
     const fetchPackages = async () => {
@@ -44,9 +121,24 @@ const ClientEdit = () => {
           status: client.status || "active",
           operation_status: client.operation_status || "Demo",
           main_location: client.main_location || "",
-          branches_locations: Array.isArray(client.branches_locations)
-            ? client.branches_locations
-            : [],
+          branches_config:
+            Array.isArray(client.branches_config) &&
+            client.branches_config.length > 0
+              ? client.branches_config.map((b) => ({
+                  name: b?.name || "",
+                  Is_Online: !!b?.Is_Online,
+                }))
+              : [
+                  ...(client.main_location
+                    ? [{ name: client.main_location, Is_Online: true }]
+                    : []),
+                  ...(Array.isArray(client.branches_locations)
+                    ? client.branches_locations.map((n) => ({
+                        name: n,
+                        Is_Online: false,
+                      }))
+                    : []),
+                ],
           payment_cycle: client.payment_cycle || "monthly",
           payment_amount: client.payment_amount || "",
           subscription_end_date: client.subscription_end_date
@@ -108,13 +200,12 @@ const ClientEdit = () => {
         { value: "Delivered", label: "Delivered" },
       ],
     },
-    { key: "main_location", label: "Main Location" },
+    { key: "main_location", label: "Main Location (Main Branch)" },
     {
-      key: "branches_locations",
-      label: "Branches Locations",
-      type: "array",
-      placeholder: "Enter branch address",
-      addButtonText: "Add Branch",
+      key: "branches_config",
+      label: "Branches",
+      type: "custom",
+      render: renderBranches,
     },
     {
       key: "payment_cycle",
@@ -146,12 +237,16 @@ const ClientEdit = () => {
       const key = res?.data?.data?.apiKey || res?.data?.data?.data?.apiKey;
       if (key) {
         setApiKey(key);
-        toast.success("API key regenerated. Copy it now — it won't be shown again.");
+        toast.success(
+          "API key regenerated. Copy it now — it won't be shown again.",
+        );
       } else {
         toast.error("No API key returned");
       }
     } catch (err) {
-      toast.error(err?.response?.data?.message || "Failed to regenerate API key");
+      toast.error(
+        err?.response?.data?.message || "Failed to regenerate API key",
+      );
     } finally {
       setRegenerating(false);
     }
@@ -160,12 +255,18 @@ const ClientEdit = () => {
   const handleSubmit = async (data) => {
     setIsSubmitting(true);
     try {
-      // ✅ نظف الفروع من الفراغات
+      // ✅ نظف الفروع وحدّد الأونلاين
+      const branches = (data.branches_config || [])
+        .map((b) => ({
+          name: (b?.name || "").trim(),
+          Is_Online: !!b?.Is_Online,
+        }))
+        .filter((b) => b.name !== "");
+
       const payload = {
         ...data,
-        branches_locations: (data.branches_locations || []).filter(
-          (b) => b && b.trim() !== "",
-        ),
+        branches_config: branches,
+        branches_locations: branches.map((b) => b.name),
       };
 
       // ✅ لو الباسورد فاضي، مش هنبعته أصلاً
@@ -211,7 +312,8 @@ const ClientEdit = () => {
       <div className="bg-white rounded-xl shadow p-5 space-y-3">
         <h3 className="text-lg font-semibold text-gray-900">Tenant API Key</h3>
         <p className="text-sm text-gray-500">
-          Used by the client backend to verify its subscription. Regenerate if the client shows wrong tenant data. The key is shown only once.
+          Used by the client backend to verify its subscription. Regenerate if
+          the client shows wrong tenant data. The key is shown only once.
         </p>
         <button
           type="button"

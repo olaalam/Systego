@@ -72,6 +72,8 @@ export default function PackageEdit() {
     { key: "haveReports", label: "Reports Support", type: "checkbox" },
     { key: "haveStockTake", label: "Stock Take Support", type: "checkbox" },
     { key: "haveAdminPanel", label: "Admin Panel Support", type: "checkbox" },
+    { key: "branches", label: "Allowed Branches", type: "number" },
+    { key: "online_branches", label: "Allowed Online Branches", type: "number" },
     { key: "status", label: "Active", type: "checkbox" },
   ];
 
