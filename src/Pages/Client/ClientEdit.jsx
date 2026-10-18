@@ -11,6 +11,8 @@ const ClientEdit = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [clientData, setClientData] = useState(null);
   const [fetching, setFetching] = useState(true);
+  const [apiKey, setApiKey] = useState("");
+  const [regenerating, setRegenerating] = useState(false);
 
   // ✅ جلب الباكدجات
   useEffect(() => {
@@ -137,6 +139,24 @@ const ClientEdit = () => {
     { key: "sales_man_phone", label: "Sales Man Phone" },
   ];
 
+  const handleRegenerateApiKey = async () => {
+    setRegenerating(true);
+    try {
+      const res = await api.post(`/api/admin/clients/${id}/regenerate-api-key`);
+      const key = res?.data?.data?.apiKey || res?.data?.data?.data?.apiKey;
+      if (key) {
+        setApiKey(key);
+        toast.success("API key regenerated. Copy it now — it won't be shown again.");
+      } else {
+        toast.error("No API key returned");
+      }
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Failed to regenerate API key");
+    } finally {
+      setRegenerating(false);
+    }
+  };
+
   const handleSubmit = async (data) => {
     setIsSubmitting(true);
     try {
@@ -178,7 +198,7 @@ const ClientEdit = () => {
   };
 
   return (
-    <div className="p-6">
+    <div className="p-6 space-y-6">
       <AddPage
         title="Edit Client"
         fields={fields}
@@ -187,6 +207,26 @@ const ClientEdit = () => {
         initialData={clientData}
         loading={isSubmitting}
       />
+
+      <div className="bg-white rounded-xl shadow p-5 space-y-3">
+        <h3 className="text-lg font-semibold text-gray-900">Tenant API Key</h3>
+        <p className="text-sm text-gray-500">
+          Used by the client backend to verify its subscription. Regenerate if the client shows wrong tenant data. The key is shown only once.
+        </p>
+        <button
+          type="button"
+          disabled={regenerating}
+          onClick={handleRegenerateApiKey}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-600 text-white text-sm font-medium hover:bg-purple-700 disabled:opacity-50"
+        >
+          {regenerating ? "Regenerating..." : "Regenerate API Key"}
+        </button>
+        {apiKey && (
+          <div className="mt-3 p-3 bg-gray-50 rounded-lg border border-gray-200 break-all font-mono text-xs text-gray-800">
+            {apiKey}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

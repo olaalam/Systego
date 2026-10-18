@@ -12,7 +12,8 @@ export default function Payments() {
     setLoading(true);
     try {
       const res = await api.get("/api/admin/payments");
-      setPayments(res?.data?.data || []);
+      const payload = res?.data?.data?.data || res?.data?.data || [];
+      setPayments(Array.isArray(payload) ? payload : []);
     } catch (err) {
       toast.error(err?.response?.data?.message || "Failed to load payments");
     } finally {
