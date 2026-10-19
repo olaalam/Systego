@@ -136,16 +136,6 @@ const Packages = () => {
       ),
     },
     {
-      key: "online_branches",
-      header: "Online Branches",
-      filterable: false,
-      render: (value) => (
-        <span className="px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">
-          {value && value > 0 ? value : "Unlimited"}
-        </span>
-      ),
-    },
-    {
       key: "status",
       header: "Status",
       filterable: true,
