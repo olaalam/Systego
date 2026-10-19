@@ -13,6 +13,7 @@ import {
   User,
   CreditCard,
   Package,
+  Puzzle,
   GitBranch,
 } from "lucide-react";
 import SubscriptionActions from "@/components/SubscriptionActions";
@@ -34,6 +35,10 @@ const OperationReportModal = ({
 
   const existingBranches = Array.isArray(report?.existing_branches)
     ? report.existing_branches
+    : [];
+
+  const extras = Array.isArray(report?.package_id?.extras)
+    ? report.package_id.extras
     : [];
 
   const fetchReport = async () => {
@@ -280,19 +285,44 @@ const OperationReportModal = ({
 
               {/* Details Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <DetailCard
-                  icon={<Package size={16} className="text-violet-500" />}
-                  label="Package"
-                  value={
-                    report.package_id
-                      ? `${report.package_id.name}${
-                          report.package_id.price
-                            ? ` — ${Number(report.package_id.price).toLocaleString()} EGP`
-                            : ""
-                        }`
-                      : "-"
-                  }
-                />
+                <div className="p-3.5 bg-gray-50/70 border border-gray-200/60 rounded-xl">
+                  <div className="flex items-center gap-2 text-xs text-gray-500 mb-1">
+                    <Package size={16} className="text-violet-500" />
+                    <span>Package</span>
+                  </div>
+                  {report.package_id ? (
+                    <>
+                      <p className="text-sm font-semibold text-gray-800 break-words">
+                        {report.package_id.name}
+                        {report.package_id.price
+                          ? ` — ${Number(
+                              report.package_id.price,
+                            ).toLocaleString()} EGP`
+                          : ""}
+                      </p>
+
+                      {extras.length > 0 && (
+                        <div className="flex flex-wrap gap-1.5 mt-2">
+                          {extras.map((extra, index) => (
+                            <span
+                              key={extra._id || index}
+                              className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full bg-violet-50 text-violet-700 border border-violet-100"
+                              title={extra.description || ""}
+                            >
+                              <Puzzle size={11} />
+                              {extra.name || extra.ar_name || "extra"}
+                              <span className="text-violet-400">
+                                · {extra.is_recurring ? "recurring" : "one-time"}
+                              </span>
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <p className="text-sm font-semibold text-gray-800">-</p>
+                  )}
+                </div>
                 <DetailCard
                   icon={<GitBranch size={16} className="text-violet-500" />}
                   label="Branches Allowed"
