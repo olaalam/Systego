@@ -39,6 +39,12 @@ const allMenuItems = [
     viewerHidden: true,
   },
   {
+    name: "Extra",
+    icon: Puzzle,
+    path: "/extras",
+    viewerHidden: true,
+  },
+  {
     name: "Payments",
     icon: CreditCard,
     path: "/payments",

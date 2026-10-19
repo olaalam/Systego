@@ -16,6 +16,9 @@ import PaymentMethods from "./Pages/PaymentMethod/PaymentMethod";
 import PaymentMethodAdd from "./Pages/PaymentMethod/PaymentMethodAdd";
 import PaymentMethodEdit from "./Pages/PaymentMethod/PaymentMethodEdit";
 import Package from "./Pages/Packages/Package";
+import Extras from "./Pages/Extras/Extras";
+import ExtraAdd from "./Pages/Extras/ExtraAdd";
+import ExtraEdit from "./Pages/Extras/ExtraEdit";
 import ThemeAdd from "./Pages/Theme/ThemeAdd";
 import ThemeEdit from "./Pages/Theme/ThemeEdit";
 import ClientEdit from "./Pages/Client/ClientEdit";
@@ -161,6 +164,34 @@ export default function AppRoutes() {
           element={
             <ProtectedRoute requiredRole="super_admin">
               <PackageEdit />
+            </ProtectedRoute>
+          }
+        />
+      </Route>
+
+      {/* âœ… Extra (super_admin Ø¨Ø³) */}
+      <Route path="extras">
+        <Route
+          index
+          element={
+            <ProtectedRoute requiredRole="super_admin">
+              <Extras />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="add"
+          element={
+            <ProtectedRoute requiredRole="super_admin">
+              <ExtraAdd />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="edit/:id"
+          element={
+            <ProtectedRoute requiredRole="super_admin">
+              <ExtraEdit />
             </ProtectedRoute>
           }
         />
