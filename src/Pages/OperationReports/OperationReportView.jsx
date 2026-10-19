@@ -96,13 +96,61 @@ const OperationReportView = () => {
           <Field label="Email" value={report.email} />
           <Field label="Main Location" value={report.main_location} />
           <Field
-            label="Branches"
+            label="Branches Allowed"
             value={
-              report.branches_locations?.length > 0
-                ? report.branches_locations.join(", ")
-                : "-"
+              !report.package_id
+                ? "-"
+                : typeof report.package_id.branches !== "number"
+                  ? "—"
+                  : report.package_id.branches > 0
+                    ? String(report.package_id.branches)
+                    : "Unlimited"
             }
           />
+          <div className="col-span-2">
+            <span className="text-sm text-gray-500">Branches</span>
+            <div className="flex flex-wrap gap-2 mt-1.5">
+              {Array.isArray(report.existing_branches) &&
+              report.existing_branches.length > 0 ? (
+                report.existing_branches.map((b, i) => (
+                  <span
+                    key={b._id || i}
+                    className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-1.5 shadow-sm"
+                  >
+                    <span
+                      className={`w-2 h-2 rounded-full ${
+                        b.enabled === false
+                          ? "bg-red-500"
+                          : b.Is_Online
+                            ? "bg-green-500"
+                            : "bg-gray-400"
+                      }`}
+                    />
+                    <span className="text-sm text-gray-800">
+                      {b.name || b.ar_name || "—"}
+                    </span>
+                    <span
+                      className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${
+                        b.enabled === false
+                          ? "text-red-600 bg-red-50"
+                          : b.Is_Online
+                            ? "text-green-700 bg-green-50"
+                            : "text-gray-500 bg-gray-100"
+                      }`}
+                    >
+                      {b.enabled === false
+                        ? "Suspended"
+                        : b.Is_Online
+                          ? "Online"
+                          : "Offline"}
+                    </span>
+                  </span>
+                ))
+              ) : (
+                <span className="text-gray-400">-</span>
+              )}
+            </div>
+          </div>
           <Field label="Payment Cycle" value={report.payment_cycle} />
           <Field label="Payment Amount" value={report.payment_amount} />
           <Field label="Contact Person" value={report.contact_person_name} />

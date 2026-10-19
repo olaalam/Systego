@@ -13,6 +13,7 @@ import {
   User,
   CreditCard,
   Package,
+  GitBranch,
 } from "lucide-react";
 import SubscriptionActions from "@/components/SubscriptionActions";
 
@@ -30,6 +31,10 @@ const OperationReportModal = ({
   const [newNote, setNewNote] = useState("");
   const [addingNote, setAddingNote] = useState(false);
   const [updatingField, setUpdatingField] = useState(false);
+
+  const existingBranches = Array.isArray(report?.existing_branches)
+    ? report.existing_branches
+    : [];
 
   const fetchReport = async () => {
     try {
@@ -289,6 +294,19 @@ const OperationReportModal = ({
                   }
                 />
                 <DetailCard
+                  icon={<GitBranch size={16} className="text-violet-500" />}
+                  label="Branches Allowed"
+                  value={
+                    !report.package_id
+                      ? "-"
+                      : typeof report.package_id.branches !== "number"
+                        ? "—"
+                        : report.package_id.branches > 0
+                          ? String(report.package_id.branches)
+                          : "Unlimited"
+                  }
+                />
+                <DetailCard
                   icon={<Mail size={16} className="text-blue-500" />}
                   label="Email"
                   value={report.email}
@@ -298,15 +316,33 @@ const OperationReportModal = ({
                   label="Main Location"
                   value={report.main_location}
                 />
-                <DetailCard
-                  icon={<MapPin size={16} className="text-orange-500" />}
-                  label="Branches"
-                  value={
-                    report.branches_locations?.length > 0
-                      ? report.branches_locations.join(", ")
-                      : "-"
-                  }
-                />
+                <div className="p-3.5 bg-gray-50/70 border border-gray-200/60 rounded-xl md:col-span-2">
+                  <div className="flex items-center justify-between gap-3 mb-2.5">
+                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                      <GitBranch size={16} className="text-orange-500" />
+                      <span>Branches</span>
+                    </div>
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 font-medium">
+                      {existingBranches.length}{" "}
+                      {existingBranches.length === 1 ? "branch" : "branches"}
+                    </span>
+                  </div>
+
+                  {existingBranches.length === 0 ? (
+                    <p className="text-sm text-gray-400 italic">
+                      No branches recorded yet.
+                    </p>
+                  ) : (
+                    <div className="flex flex-wrap gap-2">
+                      {existingBranches.map((branch, index) => (
+                        <BranchChip
+                          key={branch._id || index}
+                          branch={branch}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
                 <DetailCard
                   icon={<CreditCard size={16} className="text-emerald-500" />}
                   label="Payment Cycle & Amount"
@@ -443,6 +479,39 @@ const OperationReportModal = ({
         </div>
       </div>
     </div>
+  );
+};
+
+const BranchChip = ({ branch }) => {
+  const suspended = branch.enabled === false;
+  const online = !!branch.Is_Online;
+
+  const dot = suspended
+    ? "bg-red-500"
+    : online
+      ? "bg-green-500"
+      : "bg-gray-400";
+
+  const label = suspended ? "Suspended" : online ? "Online" : "Offline";
+
+  const labelStyle = suspended
+    ? "text-red-600 bg-red-50"
+    : online
+      ? "text-green-700 bg-green-50"
+      : "text-gray-500 bg-gray-100";
+
+  return (
+    <span className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-1.5 shadow-sm">
+      <span className={`w-2 h-2 rounded-full ${dot}`} />
+      <span className="text-sm text-gray-800">
+        {branch.name || branch.ar_name || "—"}
+      </span>
+      <span
+        className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${labelStyle}`}
+      >
+        {label}
+      </span>
+    </span>
   );
 };
 

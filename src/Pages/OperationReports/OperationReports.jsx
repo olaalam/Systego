@@ -107,6 +107,8 @@ const OperationReports = () => {
       render: (v, row) => {
         const pkg = row.package_id;
         if (!pkg) return <span className="text-gray-400 text-xs">-</span>;
+        const allowed =
+          typeof pkg.branches === "number" ? pkg.branches : null;
         return (
           <div className="text-sm">
             <span className="font-medium text-gray-800">{pkg.name}</span>
@@ -115,6 +117,14 @@ const OperationReports = () => {
                 {Number(pkg.price).toLocaleString()} EGP
               </span>
             )}
+            <span className="block text-xs text-gray-500 mt-0.5">
+              Branches:{" "}
+              {allowed === null
+                ? "—"
+                : allowed === 0
+                  ? "Unlimited"
+                  : allowed}
+            </span>
           </div>
         );
       },
@@ -173,16 +183,29 @@ const OperationReports = () => {
     },
     { key: "main_location", header: "Main Location", render: (v) => v || "-" },
     {
-      key: "branches_locations",
+      key: "existing_branches",
       header: "Branches",
-      render: (v) =>
-        v && v.length > 0 ? (
-          <span className="text-sm text-gray-700">
-            {v.length} branch{v.length > 1 ? "es" : ""}
+      render: (v, row) => {
+        const list = Array.isArray(row.existing_branches)
+          ? row.existing_branches
+          : Array.isArray(v)
+            ? v
+            : [];
+        if (list.length === 0) {
+          return <span className="text-gray-400">-</span>;
+        }
+        return (
+          <span
+            className="text-sm text-gray-700"
+            title={list
+              .map((b) => b.name || b.ar_name)
+              .filter(Boolean)
+              .join(", ")}
+          >
+            {list.length} branch{list.length > 1 ? "es" : ""}
           </span>
-        ) : (
-          <span className="text-gray-400">-</span>
-        ),
+        );
+      },
     },
     {
       key: "payment_cycle",
