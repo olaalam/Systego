@@ -6,7 +6,13 @@ import api from "@/api/api";
 import { toast } from "react-toastify";
 import OperationReportModal from "./OperationReportModal";
 
-const OPERATION_STATUS_OPTIONS = ["Demo", "Sales", "Data", "View", "Delivered"];
+const OPERATION_STATUS_OPTIONS = [
+  "Demo",
+  "Sales",
+  "Data",
+  "Visit",
+  "Delivered",
+];
 
 const OperationReports = () => {
   const { data, loading, refetch } = useGet("/api/admin/operation-reports");
@@ -155,7 +161,7 @@ const OperationReports = () => {
           Sales:
             "bg-amber-50 text-amber-700 border-amber-300 hover:bg-amber-100",
           Data: "bg-purple-50 text-purple-700 border-purple-300 hover:bg-purple-100",
-          View: "bg-sky-50 text-sky-700 border-sky-300 hover:bg-sky-100",
+          Visit: "bg-sky-50 text-sky-700 border-sky-300 hover:bg-sky-100",
           Delivered:
             "bg-emerald-50 text-emerald-700 border-emerald-300 hover:bg-emerald-100",
           Delvierd:

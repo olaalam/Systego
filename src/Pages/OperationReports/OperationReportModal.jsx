@@ -18,7 +18,13 @@ import {
 } from "lucide-react";
 import SubscriptionActions from "@/components/SubscriptionActions";
 
-const OPERATION_STATUS_OPTIONS = ["Demo", "Sales", "Data", "View", "Delivered"];
+const OPERATION_STATUS_OPTIONS = [
+  "Demo",
+  "Sales",
+  "Data",
+  "Visit",
+  "Delivered",
+];
 
 const OperationReportModal = ({ reportId, onClose, onReportUpdated }) => {
   const [report, setReport] = useState(null);
