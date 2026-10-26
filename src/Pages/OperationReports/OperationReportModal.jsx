@@ -18,13 +18,9 @@ import {
 } from "lucide-react";
 import SubscriptionActions from "@/components/SubscriptionActions";
 
-const OPERATION_STATUS_OPTIONS = ["Demo", "Sales", "Data", "Delivered"];
+const OPERATION_STATUS_OPTIONS = ["Demo", "Sales", "Data", "View", "Delivered"];
 
-const OperationReportModal = ({
-  reportId,
-  onClose,
-  onReportUpdated,
-}) => {
+const OperationReportModal = ({ reportId, onClose, onReportUpdated }) => {
   const [report, setReport] = useState(null);
   const [fetching, setFetching] = useState(true);
   const admin = JSON.parse(localStorage.getItem("admin") || "{}");
@@ -106,7 +102,7 @@ const OperationReportModal = ({
       toast.success(`Operation status updated to ${newOpStatus}`);
     } catch (err) {
       toast.error(
-        err.response?.data?.message || "Failed to update operation status"
+        err.response?.data?.message || "Failed to update operation status",
       );
     } finally {
       setUpdatingField(false);
@@ -120,7 +116,7 @@ const OperationReportModal = ({
     try {
       const res = await api.post(
         `/api/admin/operation-reports/${reportId}/notes`,
-        { text: noteText }
+        { text: noteText },
       );
       toast.success("Note added!");
       setNewNote("");
@@ -157,7 +153,7 @@ const OperationReportModal = ({
     if (!window.confirm("Delete this note?")) return;
     try {
       const res = await api.delete(
-        `/api/admin/operation-reports/${reportId}/notes/${index}`
+        `/api/admin/operation-reports/${reportId}/notes/${index}`,
       );
       toast.success("Note deleted");
 
@@ -312,7 +308,8 @@ const OperationReportModal = ({
                               <Puzzle size={11} />
                               {extra.name || extra.ar_name || "extra"}
                               <span className="text-violet-400">
-                                · {extra.is_recurring ? "recurring" : "one-time"}
+                                ·{" "}
+                                {extra.is_recurring ? "recurring" : "one-time"}
                               </span>
                             </span>
                           ))}
@@ -365,10 +362,7 @@ const OperationReportModal = ({
                   ) : (
                     <div className="flex flex-wrap gap-2">
                       {existingBranches.map((branch, index) => (
-                        <BranchChip
-                          key={branch._id || index}
-                          branch={branch}
-                        />
+                        <BranchChip key={branch._id || index} branch={branch} />
                       ))}
                     </div>
                   )}
@@ -411,11 +405,13 @@ const OperationReportModal = ({
                           ? "Active"
                           : "Inactive"}
                   </p>
-                  {(report.subscription_end_date || report.subscription?.endDate) && (
+                  {(report.subscription_end_date ||
+                    report.subscription?.endDate) && (
                     <p className="text-xs text-gray-500 mt-1">
                       Until{" "}
                       {new Date(
-                        report.subscription_end_date || report.subscription.endDate,
+                        report.subscription_end_date ||
+                          report.subscription.endDate,
                       ).toLocaleDateString()}
                     </p>
                   )}

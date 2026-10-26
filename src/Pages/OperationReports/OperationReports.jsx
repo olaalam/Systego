@@ -6,7 +6,7 @@ import api from "@/api/api";
 import { toast } from "react-toastify";
 import OperationReportModal from "./OperationReportModal";
 
-const OPERATION_STATUS_OPTIONS = ["Demo", "Sales", "Data", "Delivered"];
+const OPERATION_STATUS_OPTIONS = ["Demo", "Sales", "Data", "View", "Delivered"];
 
 const OperationReports = () => {
   const { data, loading, refetch } = useGet("/api/admin/operation-reports");
@@ -23,14 +23,16 @@ const OperationReports = () => {
     setUpdatingId(id);
     // Optimistic update
     setReports((prev) =>
-      prev.map((r) => (r._id === id ? { ...r, status: newStatus } : r))
+      prev.map((r) => (r._id === id ? { ...r, status: newStatus } : r)),
     );
 
     try {
       await api.patch(`/api/admin/operation-reports/${id}/status`, {
         status: newStatus,
       });
-      toast.success(`Status updated to ${newStatus === "active" ? "Active" : "Inactive"}`);
+      toast.success(
+        `Status updated to ${newStatus === "active" ? "Active" : "Inactive"}`,
+      );
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to update status");
       refetch();
@@ -44,8 +46,8 @@ const OperationReports = () => {
     // Optimistic update
     setReports((prev) =>
       prev.map((r) =>
-        r._id === id ? { ...r, operation_status: newOpStatus } : r
-      )
+        r._id === id ? { ...r, operation_status: newOpStatus } : r,
+      ),
     );
 
     try {
@@ -55,7 +57,7 @@ const OperationReports = () => {
       toast.success(`Operation status updated to ${newOpStatus}`);
     } catch (err) {
       toast.error(
-        err.response?.data?.message || "Failed to update operation status"
+        err.response?.data?.message || "Failed to update operation status",
       );
       refetch();
     } finally {
@@ -82,7 +84,7 @@ const OperationReports = () => {
           ...updatedFields,
           ...(normalizedNotes !== undefined ? { notes: normalizedNotes } : {}),
         };
-      })
+      }),
     );
   };
 
@@ -107,8 +109,7 @@ const OperationReports = () => {
       render: (v, row) => {
         const pkg = row.package_id;
         if (!pkg) return <span className="text-gray-400 text-xs">-</span>;
-        const allowed =
-          typeof pkg.branches === "number" ? pkg.branches : null;
+        const allowed = typeof pkg.branches === "number" ? pkg.branches : null;
         return (
           <div className="text-sm">
             <span className="font-medium text-gray-800">{pkg.name}</span>
@@ -119,11 +120,7 @@ const OperationReports = () => {
             )}
             <span className="block text-xs text-gray-500 mt-0.5">
               Branches:{" "}
-              {allowed === null
-                ? "—"
-                : allowed === 0
-                  ? "Unlimited"
-                  : allowed}
+              {allowed === null ? "—" : allowed === 0 ? "Unlimited" : allowed}
             </span>
           </div>
         );
@@ -155,10 +152,14 @@ const OperationReports = () => {
         const opStatus = row.operation_status || "Demo";
         const colorStyles = {
           Demo: "bg-blue-50 text-blue-700 border-blue-300 hover:bg-blue-100",
-          Sales: "bg-amber-50 text-amber-700 border-amber-300 hover:bg-amber-100",
+          Sales:
+            "bg-amber-50 text-amber-700 border-amber-300 hover:bg-amber-100",
           Data: "bg-purple-50 text-purple-700 border-purple-300 hover:bg-purple-100",
-          Delivered: "bg-emerald-50 text-emerald-700 border-emerald-300 hover:bg-emerald-100",
-          Delvierd: "bg-emerald-50 text-emerald-700 border-emerald-300 hover:bg-emerald-100",
+          View: "bg-sky-50 text-sky-700 border-sky-300 hover:bg-sky-100",
+          Delivered:
+            "bg-emerald-50 text-emerald-700 border-emerald-300 hover:bg-emerald-100",
+          Delvierd:
+            "bg-emerald-50 text-emerald-700 border-emerald-300 hover:bg-emerald-100",
         };
 
         return (
