@@ -96,6 +96,21 @@ const OperationReportView = () => {
           <Field label="Email" value={report.email} />
           <Field label="Main Location" value={report.main_location} />
           <Field
+            label="Subdomain URL"
+            value={
+              report.subdomain_url ? (
+                <a
+                  href={report.subdomain_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:underline break-all"
+                >
+                  {report.subdomain_url}
+                </a>
+              ) : null
+            }
+          />
+          <Field
             label="Branches Allowed"
             value={
               !report.package_id

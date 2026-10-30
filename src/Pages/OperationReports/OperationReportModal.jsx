@@ -15,6 +15,7 @@ import {
   Package,
   Puzzle,
   GitBranch,
+  Globe,
 } from "lucide-react";
 import SubscriptionActions from "@/components/SubscriptionActions";
 
@@ -348,6 +349,24 @@ const OperationReportModal = ({ reportId, onClose, onReportUpdated }) => {
                   icon={<MapPin size={16} className="text-red-500" />}
                   label="Main Location"
                   value={report.main_location}
+                />
+                <DetailCard
+                  icon={<Globe size={16} className="text-sky-500" />}
+                  label="Subdomain URL"
+                  value={
+                    report.subdomain_url ? (
+                      <a
+                        href={report.subdomain_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:underline break-all"
+                      >
+                        {report.subdomain_url}
+                      </a>
+                    ) : (
+                      "-"
+                    )
+                  }
                 />
                 <div className="p-3.5 bg-gray-50/70 border border-gray-200/60 rounded-xl md:col-span-2">
                   <div className="flex items-center justify-between gap-3 mb-2.5">
