@@ -128,39 +128,25 @@ const Clients = () => {
       const sub = client.subscription || {};
       const pkg = client.package_id || {};
       const subdomain = client.subdomain || "";
-      const scId = `sc_${client._id}`;
 
       return {
         "Company Name": client.company_name || "",
         Email: client.email || "",
         Status: client.status || "",
-        "Operation Status": client.operation_status || "",
         Package: pkg.name || "",
-        "Subscription Days Left": sub.daysLeft ?? "",
-        "Subscription Expired": sub.expired ? "Yes" : "No",
-        "Subscription Start Date": formatDate(sub.startDate),
-        "Subscription End Date": formatDate(
-          sub.endDate || client.subscription_end_date,
-        ),
         "Payment Cycle": client.payment_cycle || "",
         "Payment Amount": client.payment_amount ?? "",
         "Last Payment Date": formatDate(
           sub.lastPaymentDate || client.last_payment_date,
         ),
-        "Main Branch": client.main_location || "",
         Subdomain: subdomain,
         "Website URL":
           client.subdomain_url ||
           (subdomain ? `https://${subdomain}.systego.net` : ""),
-        "Database Name": client.db_name || scId,
         "Contact Person": client.contact_person_name || "",
         "Contact Phone": client.contact_person_phone || "",
         "Sales Man": client.sales_man_name || "",
         "Sales Man Phone": client.sales_man_phone || "",
-        Notes: (client.notes || []).map((n) => n.text).join(" | "),
-        "Created At": formatDate(client.created_at || client.createdAt),
-        "Updated At": formatDate(client.updated_at || client.updatedAt),
-        "Client ID": client._id || "",
       };
     });
 
