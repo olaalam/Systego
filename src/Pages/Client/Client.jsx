@@ -1,5 +1,6 @@
 // src/pages/clients.jsx
 import React, { useState } from "react";
+import * as XLSX from "xlsx";
 import DataTable from "@/components/DataTable";
 import Loader from "@/components/Loader";
 import useGet from "@/hooks/useGet";
@@ -102,6 +103,89 @@ const Clients = () => {
       setDeleteTarget(null);
     }
   };
+
+  // ✅ تصدير كل بيانات كل العملاء إلى ملف Excel
+  const handleExport = () => {
+    if (!clients.length) {
+      toast.error("No clients found to export");
+      return;
+    }
+
+    const formatDate = (value) => {
+      if (!value) return "";
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return "";
+      return date.toLocaleString("en-GB", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    };
+
+    const rows = clients.map((client) => {
+      const sub = client.subscription || {};
+      const pkg = client.package_id || {};
+      const subdomain = client.subdomain || "";
+      const scId = `sc_${client._id}`;
+
+      return {
+        "Company Name": client.company_name || "",
+        Email: client.email || "",
+        Status: client.status || "",
+        "Operation Status": client.operation_status || "",
+        Package: pkg.name || "",
+        "Subscription Days Left": sub.daysLeft ?? "",
+        "Subscription Expired": sub.expired ? "Yes" : "No",
+        "Subscription Start Date": formatDate(sub.startDate),
+        "Subscription End Date": formatDate(
+          sub.endDate || client.subscription_end_date,
+        ),
+        "Payment Cycle": client.payment_cycle || "",
+        "Payment Amount": client.payment_amount ?? "",
+        "Last Payment Date": formatDate(
+          sub.lastPaymentDate || client.last_payment_date,
+        ),
+        "Main Branch": client.main_location || "",
+        Subdomain: subdomain,
+        "Website URL":
+          client.subdomain_url ||
+          (subdomain ? `https://${subdomain}.systego.net` : ""),
+        "Database Name": client.db_name || scId,
+        "Contact Person": client.contact_person_name || "",
+        "Contact Phone": client.contact_person_phone || "",
+        "Sales Man": client.sales_man_name || "",
+        "Sales Man Phone": client.sales_man_phone || "",
+        Notes: (client.notes || []).map((n) => n.text).join(" | "),
+        "Created At": formatDate(client.created_at || client.createdAt),
+        "Updated At": formatDate(client.updated_at || client.updatedAt),
+        "Client ID": client._id || "",
+      };
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(rows);
+
+    // ✅ توسيع الأعمدة تلقائياً حسب طول المحتوى
+    worksheet["!cols"] = Object.keys(rows[0]).map((key) => ({
+      wch: Math.min(
+        45,
+        Math.max(
+          key.length,
+          ...rows.map((row) => String(row[key] ?? "").length),
+        ) + 2,
+      ),
+    }));
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Clients");
+    XLSX.writeFile(
+      workbook,
+      `clients_${new Date().toISOString().slice(0, 10)}.xlsx`,
+    );
+    toast.success(`Exported ${rows.length} clients successfully`);
+  };
+
   const columns = [
     { key: "company_name", header: "Company Name" },
     { key: "email", header: "Email" },
@@ -167,7 +251,9 @@ const Clients = () => {
         const sub = row.subscription;
         if (!sub || sub.daysLeft === null) {
           if (isViewer) {
-            return <span className="text-xs text-gray-400">No subscription</span>;
+            return (
+              <span className="text-xs text-gray-400">No subscription</span>
+            );
           }
           return (
             <SubscriptionActions
@@ -256,6 +342,8 @@ const Clients = () => {
         onDelete={(item) => setDeleteTarget(item)}
         addButtonText="Add Client"
         addPath="add"
+        onExport={handleExport}
+        exportButtonText="Export to Excel"
         editPath={(item) => `edit/${item._id}`}
         itemsPerPage={10}
         searchable={true}

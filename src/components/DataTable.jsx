@@ -6,6 +6,7 @@ import {
   Trash2,
   ChevronLeft,
   ChevronRight,
+  Download,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -24,6 +25,8 @@ export default function DataTable({
   addButtonText = "Add New",
   className = "",
   showActions = true, // ✅ prop جديدة
+  onExport = null, // ✅ دالة تصدير (تستقبل البيانات المعروضة)
+  exportButtonText = "Export Excel",
 }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
@@ -87,18 +90,30 @@ export default function DataTable({
   {/* Header */}
   <div className="p-6 border-b border-gray-200">
     <div className="mb-4 flex  flex-row md:flex-col sm:items-center sm:justify-between gap-4">
-      {onAdd && (
-        <button
-          onClick={() => {
-            if (addPath) navigate(addPath);
-            else if (onAdd) onAdd();
-          }}
-          className="bg-primary hover:bg-teal-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors w-full sm:w-auto justify-center"
-        >
-          <Plus size={20} />
-          {addButtonText}
-        </button>
-      )}
+      <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+        {onAdd && (
+          <button
+            onClick={() => {
+              if (addPath) navigate(addPath);
+              else if (onAdd) onAdd();
+            }}
+            className="bg-primary hover:bg-teal-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors w-full sm:w-auto justify-center"
+          >
+            <Plus size={20} />
+            {addButtonText}
+          </button>
+        )}
+        {onExport && (
+          <button
+            onClick={() => onExport(filteredData)}
+            className="bg-white hover:bg-emerald-50 text-emerald-700 border border-emerald-600 px-4 py-2 rounded-lg flex items-center gap-2 transition-colors w-full sm:w-auto justify-center"
+            title="Export all rows to Excel"
+          >
+            <Download size={20} />
+            {exportButtonText}
+          </button>
+        )}
+      </div>
       <h2 className="text-xl sm:text-2xl font-medium text-gray-800">
         {title}
       </h2>
